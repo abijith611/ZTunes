@@ -3,6 +3,8 @@ package com.example.mymusicapplication.adapter
 import android.app.Dialog
 import android.content.Context
 import android.content.ContextWrapper
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -54,6 +56,7 @@ class MyPlaylistRecyclerViewAdapter(private var albumList: List<Playlist>, priva
                     R.id.item1 -> {
                         val dialog = Dialog(context, R.style.DialogStyle)
                         dialog.setContentView(R.layout.rename_custom_dialog)
+                        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                         dialog.show()
                         val playlistName = dialog.findViewById<EditText>(R.id.etName)
                         val okButton = dialog.findViewById<TextView>(R.id.okButton)

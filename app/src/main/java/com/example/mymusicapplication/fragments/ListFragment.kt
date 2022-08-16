@@ -254,7 +254,7 @@ class ListFragment : Fragment() {
                 }
 
                 //binding.tvDuration.visibility = View.INVISIBLE
-                binding.card.visibility = View.INVISIBLE
+                //binding.card.visibility = View.INVISIBLE
 
                 binding.appBarLayout.setExpanded(false)
 //                val set = ConstraintSet()
@@ -292,7 +292,7 @@ class ListFragment : Fragment() {
                 artistSTATE = UNSORTED
                 albumSTATE = UNSORTED
                 binding.appBarLayout.setExpanded(false)
-                binding.card.visibility = View.INVISIBLE
+                //binding.card.visibility = View.INVISIBLE
 
 //                val set = ConstraintSet()
 //                val layout = binding.constraintLayoutList

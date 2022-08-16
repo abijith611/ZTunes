@@ -2,6 +2,7 @@ package com.example.mymusicapplication.adapter
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -162,6 +163,7 @@ class MyPlaylistItemRecyclerViewAdapter(private var songList: MutableList<Song>,
                             val dialog = AlbumDialogFragment()
                             dialog.setStyle(DialogFragment.STYLE_NORMAL,R.style.DialogStyle2)
                             dialog.arguments = bundle
+                            dialog.activity?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                             dialog.show(activity.supportFragmentManager, "albumDialog")
 //                            val fragment = AlbumFragment()
 //                            fragment.arguments = bundle

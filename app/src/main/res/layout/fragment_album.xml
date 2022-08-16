@@ -35,7 +35,7 @@
                 android:paddingBottom="5dp"
                 android:paddingEnd="10dp"
                 android:textColor="@color/black"
-                android:textColorHint="@color/black"
+                android:textColorHint="@android:color/tertiary_text_dark"
                 tools:ignore="TouchTargetSizeCheck" />
         </com.google.android.material.card.MaterialCardView>
 

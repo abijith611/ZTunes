@@ -49,8 +49,8 @@ class AccountFragment : Fragment() {
         var user1= user?.let { songViewModel.getUser(it.email) }
         if (user1 != null) {
             binding.tvName.text = user1.name
-            binding.tvUsername.text = user1.email
-            binding.tvMobile.text = user1.mobileNumber
+//            binding.tvUsername.text = user1.email
+//            binding.tvMobile.text = user1.mobileNumber
         }
 //        detailsUpdate.observe(viewLifecycleOwner){
 //            if(it==true){
@@ -91,7 +91,7 @@ class AccountFragment : Fragment() {
 
 
 
-        binding.tvEdit.setOnClickListener foo@{
+        binding.ivForward1.setOnClickListener foo@{
             val validator = Validator()
             val dialog = Dialog(it.context, R.style.DialogStyle)
             dialog.setContentView(R.layout.fragment_edit_dialog)
@@ -102,8 +102,10 @@ class AccountFragment : Fragment() {
             //val etEmail = dialog.findViewById<EditText>(R.id.etEmail)
             val cancelButton = dialog.findViewById<TextView>(R.id.cancelButton)
             val okButton = dialog.findViewById<TextView>(R.id.okButton)
-            etName?.setText(user1?.name)
-            etMobile?.setText(user1?.mobileNumber)
+            val existingName = user1?.name
+            val existingMobile = user1?.mobileNumber
+            etName?.setText(existingName)
+            etMobile?.setText(existingMobile)
 
 
 //            if(etEmail.text.isEmpty()){
@@ -144,6 +146,7 @@ class AccountFragment : Fragment() {
                     }
                     dialog.cancel()
                     if (user1 != null) {
+                        if(!(existingName==name && existingMobile ==mob))
                         detailsUpdate(songViewModel, user1!!, binding)
                         if (user != null) {
                             user1=songViewModel.getUser(user.email)
@@ -175,8 +178,8 @@ class AccountFragment : Fragment() {
             .setAnchorView(MainActivity.snackBarAnchor).show()
         val user1=songViewModel.getUser(user.email)
         binding.tvName.text = user1?.name
-        binding.tvUsername.text = user1?.email
-        binding.tvMobile.text = user1?.mobileNumber
+//        binding.tvUsername.text = user1?.email
+//        binding.tvMobile.text = user1?.mobileNumber
     }
     }
 

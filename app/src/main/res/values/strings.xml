@@ -54,7 +54,7 @@
     <string name="remove_from_queue">Remove from Queue</string>
     <string name="play_next">Play next</string>
     <string name="favourites">Favourites</string>
-    <string name="edit_account_details">Edit Account Details</string>
+    <string name="edit_account_details">Personal Details</string>
     <string name="no_playlists_available">No Playlists available</string>
     <string name="no_songs_in_queue">No songs in queue</string>
     <string name="ztunes">ZTunes</string>
@@ -81,4 +81,5 @@
     <string name="no_songs_in_the_playlist">No Songs in the playlist</string>
     <string name="lets_find_some_songs_for_you">Lets find some songs for you</string>
     <string name="add_songs">Search songs</string>
+    <string name="personal_details">Personal Details</string>
 </resources>

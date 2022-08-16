@@ -2,6 +2,8 @@ package com.example.mymusicapplication.fragments
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -95,6 +97,7 @@ class AlbumFragment : Fragment() {
             }
             val dialog = Dialog(requireContext(), R.style.DialogStyle)
             dialog.setContentView(R.layout.custom_dialog)
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             dialog.show()
             val playlistName = dialog.findViewById<EditText>(R.id.etName)
             val okButton = dialog.findViewById<TextView>(R.id.okButton)

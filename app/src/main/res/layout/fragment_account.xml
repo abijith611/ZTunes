@@ -19,7 +19,7 @@
                 android:id="@+id/tvTitle2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="20dp"
                 android:ellipsize="marquee"
                 android:fontFamily="@font/spline_medium"
                 android:marqueeRepeatLimit="marquee_forever"
@@ -117,19 +117,6 @@
             <!--                                    app:layout_constraintTop_toBottomOf="@+id/tvName"-->
             <!--                                    app:layout_constraintWidth_percent=".8" />-->
 
-            <TextView
-                android:id="@+id/tvUsername"
-                android:layout_width="165dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:fontFamily="@font/spline_medium"
-                android:text="@string/username"
-                android:textColor="@android:color/secondary_text_dark"
-                android:textSize="17sp"
-                app:layout_constraintStart_toStartOf="@+id/favList"
-                app:layout_constraintTop_toBottomOf="@+id/tvName"
-                app:layout_constraintWidth_percent=".8" />
-
             <!--                                <TextView-->
             <!--                                    android:id="@+id/tvMobileLabel"-->
             <!--                                    android:layout_width="165dp"-->
@@ -143,19 +130,6 @@
             <!--                                    app:layout_constraintTop_toBottomOf="@+id/tvUsernameLabel"-->
             <!--                                    app:layout_constraintBottom_toBottomOf="parent"-->
             <!--                                    app:layout_constraintWidth_percent=".8" />-->
-
-            <TextView
-                android:id="@+id/tvMobile"
-                android:layout_width="165dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/spline_medium"
-                android:text="@string/mobile_number"
-                android:textColor="@android:color/secondary_text_dark"
-                android:textSize="17sp"
-                app:layout_constraintStart_toStartOf="@+id/favList"
-                app:layout_constraintTop_toBottomOf="@+id/tvUsername"
-                app:layout_constraintWidth_percent=".8" />
 
 
             <!--        <androidx.appcompat.widget.AppCompatButton-->
@@ -172,17 +146,17 @@
             <!--            app:layout_constraintVertical_bias=".6"-->
             <!--            app:layout_constraintWidth_percent=".8" />-->
 
-            <ImageView
-                android:id="@+id/tvEdit"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="40dp"
-                android:src="@drawable/edit"
-                android:textColor="@android:color/white"
-                android:textSize="17sp"
-                app:layout_constraintEnd_toStartOf="@id/btnSignOut"
-                app:layout_constraintTop_toTopOf="parent" />
+<!--            <ImageView-->
+<!--                android:id="@+id/tvEdit"-->
+<!--                android:layout_width="30dp"-->
+<!--                android:layout_height="30dp"-->
+<!--                android:layout_marginTop="20dp"-->
+<!--                android:layout_marginEnd="40dp"-->
+<!--                android:src="@drawable/edit"-->
+<!--                android:textColor="@android:color/white"-->
+<!--                android:textSize="17sp"-->
+<!--                app:layout_constraintEnd_toStartOf="@id/btnSignOut"-->
+<!--                app:layout_constraintTop_toTopOf="parent" />-->
 
             <ImageView
                 android:id="@+id/btnSignOut"
@@ -197,18 +171,95 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/acc"
+                android:layout_width="0dp"
+                android:layout_height="70dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:backgroundTint="@android:color/transparent"
+                android:transitionName="favClicked"
+                app:cardCornerRadius="7.5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvName">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardAcc1"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="0dp"
+                        android:backgroundTint="@android:color/transparent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:id="@+id/ivAcc1"
+                                android:layout_width="40dp"
+                                android:layout_height="45dp"
+                                android:src="@drawable/ic_account"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+
+                    <TextView
+                        android:id="@+id/tvTitle1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:ellipsize="marquee"
+                        android:fontFamily="@font/spline_medium"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:scrollHorizontally="true"
+                        android:singleLine="true"
+                        android:text="@string/personal_details"
+                        android:textColor="@color/white"
+                        android:textSize="17sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/cardAcc1"
+                        app:layout_constraintStart_toEndOf="@+id/cardAcc1"
+                        app:layout_constraintTop_toTopOf="@+id/cardAcc1" />
+
+                    <ImageView
+                        android:id="@+id/ivForward1"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/arrow_forward"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/favList"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
-                android:layout_marginTop="40dp"
-                android:backgroundTint="@android:color/transparent"
-                app:cardCornerRadius="7.5dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
+                android:backgroundTint="@android:color/transparent"
+                android:transitionName="favClicked"
+                app:cardCornerRadius="7.5dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvMobile"
-                android:transitionName="favClicked">
+                app:layout_constraintTop_toBottomOf="@+id/acc">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -218,11 +269,12 @@
                         android:id="@+id/imageView"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="0dp"
                         android:backgroundTint="@android:color/transparent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
+
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
@@ -262,7 +314,7 @@
                         android:id="@+id/ivForward"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
-                        android:layout_marginEnd="22.5dp"
+                        android:layout_marginEnd="10dp"
                         android:src="@drawable/arrow_forward"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
