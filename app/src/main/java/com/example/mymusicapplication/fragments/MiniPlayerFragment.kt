@@ -3,6 +3,8 @@ package com.example.mymusicapplication.fragments
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.*
 import android.view.animation.AnimationUtils
@@ -97,6 +99,27 @@ class MiniPlayerFragment : Fragment(), GestureDetector.OnGestureListener{
                     binding.ivPlayMini.setImageResource(R.drawable.ic_pause)
                 }
             }
+        }
+
+        val handler = Handler(Looper.getMainLooper())
+        val delay = 250L
+        handler.postDelayed(object: Runnable{
+            override fun run() {
+                try{
+                    if(MusicService.mediaPlayerService.currentPosition <= MusicService.mediaPlayerService.duration) {
+                        setSeekbarPosition(binding)
+                        //Log.i("DetailFragment", "${mediaPlayerService.currentPosition} ${mediaPlayerService.duration}")
+                    }
+                }
+                catch (e:Exception){
+                    Log.i("ex", e.printStackTrace().toString())                }
+
+                handler.postDelayed(this,delay)
+            }
+        },delay)
+
+        binding.seekBar.setOnTouchListener{_,_->
+            return@setOnTouchListener true
         }
 
 
@@ -234,6 +257,11 @@ class MiniPlayerFragment : Fragment(), GestureDetector.OnGestureListener{
                 .addSharedElement(binding.cardSong, song?.title.toString())
                 .add(R.id.fragmentContainer,detailFragment).addToBackStack(null).commit()
 
+    }
+
+    private fun setSeekbarPosition(binding: FragmentMiniPlayerBinding){
+        binding.seekBar.max = MusicService.mediaPlayerService.duration
+        binding.seekBar.progress = MusicService.mediaPlayerService.currentPosition
     }
 
 
