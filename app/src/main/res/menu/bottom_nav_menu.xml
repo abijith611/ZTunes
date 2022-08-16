@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<item
+    android:id="@+id/miHome"
+    android:title="@string/home"
+    android:icon="@drawable/ic_action_name"/>
+
+    <item
+        android:id="@+id/miSearch"
+        android:title="@string/search"
+        android:icon="@drawable/ic_search"/>
+
+    <item
+        android:id="@+id/miAlbum"
+        android:title="@string/album"
+        android:icon="@drawable/ic_album"/>
+    <item
+        android:id="@+id/miAccount"
+        android:title="@string/account"
+        android:icon="@drawable/ic_account"/>
+
+</menu>

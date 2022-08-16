@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ic_background"
+    tools:context=".fragments.HomeFragment">
+
+    <ScrollView
+        android:scrollbars="none"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rootLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="0dp">
+
+
+
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:text="@string/ztunes"
+                    android:fontFamily="@font/spline_bold"
+                    android:textColor="@color/white"
+                    android:textSize="25sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/ivLogo"
+                    app:layout_constraintStart_toEndOf="@id/ivLogo"
+                    app:layout_constraintTop_toTopOf="@+id/ivLogo" />
+
+                <ImageView
+                    android:id="@+id/ivLogo"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@mipmap/logoo_no_bg"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivRecent"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/recent"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvTitle" />
+
+        <ImageView
+            android:id="@+id/ivFrequent"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/frequent"
+            app:layout_constraintBottom_toBottomOf="@+id/ivRecent"
+            app:layout_constraintEnd_toStartOf="@+id/ivRecent"
+            app:layout_constraintTop_toTopOf="@+id/ivRecent" />
+
+        <ImageView
+            android:id="@+id/ivQueue"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/ic_baseline_dehaze_24"
+            app:layout_constraintBottom_toBottomOf="@+id/ivFrequent"
+            app:layout_constraintEnd_toStartOf="@+id/ivFrequent"
+            app:layout_constraintTop_toTopOf="@+id/ivFrequent" />
+
+
+
+
+
+
+        <TextView
+            android:id="@+id/tvMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="15dp"
+            android:paddingEnd="10dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/top_rated"
+            android:fontFamily="@font/spline_medium"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+<!--    <com.google.android.material.card.MaterialCardView-->
+<!--        android:id="@+id/carouselCard"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="240dp"-->
+<!--        android:layout_margin="10dp"-->
+<!--        android:paddingStart="10dp"-->
+<!--        android:paddingEnd="10dp"-->
+<!--        app:cardCornerRadius="0dp"-->
+<!--        app:strokeWidth="0dp"-->
+<!--        app:strokeColor="@color/cardview_dark_background"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvMain">-->
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager2"
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvMain" />
+<!--            <TextView-->
+<!--                android:id="@+id/tvInfo"-->
+<!--                android:paddingStart="15dp"-->
+<!--                android:paddingEnd="10dp"-->
+<!--                android:paddingTop="6dp"-->
+<!--                android:background="@color/cardview_dark_background"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:textSize="17sp"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:text="@string/information" />-->
+
+
+
+
+<!--    </com.google.android.material.card.MaterialCardView>-->
+
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:id="@+id/tvHeading1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/categories"
+            android:fontFamily="@font/spline_medium"
+            android:textSize="22sp"
+            android:paddingStart="15dp"
+            android:paddingEnd="10dp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/viewPager2" />
+
+        <HorizontalScrollView
+            android:id="@+id/horizontalView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvHeading1">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/innerLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card1"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardElevation="10dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/cardview_dark_background"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:id="@+id/image1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@mipmap/edm" />
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <TextView
+                    android:id="@+id/tv1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/edm"
+                    android:fontFamily="@font/spline_regular"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    app:layout_constraintStart_toStartOf="@+id/card1"
+                    app:layout_constraintTop_toBottomOf="@+id/card1" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card2"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardElevation="10dp"
+                    app:layout_constraintStart_toEndOf="@+id/card1"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/cardview_dark_background"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:id="@+id/image2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@mipmap/romantic" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/tv2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/romance"
+                    android:fontFamily="@font/spline_regular"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    app:layout_constraintStart_toStartOf="@+id/card2"
+                    app:layout_constraintTop_toBottomOf="@+id/card2" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card3"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardElevation="10dp"
+                    app:layout_constraintStart_toEndOf="@+id/card2"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/cardview_dark_background"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:id="@+id/image3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@mipmap/party" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/tv3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/party"
+                    android:fontFamily="@font/spline_regular"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    app:layout_constraintStart_toStartOf="@+id/card3"
+                    app:layout_constraintTop_toBottomOf="@+id/card3" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card4"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="10dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardElevation="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/card3"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/cardview_dark_background"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:id="@+id/image4"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@mipmap/pop" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/tv4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/popular"
+                    android:fontFamily="@font/spline_regular"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    app:layout_constraintStart_toStartOf="@+id/card4"
+                    app:layout_constraintTop_toBottomOf="@+id/card4" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </HorizontalScrollView>
+
+
+
+        <TextView
+            android:layout_marginTop="25dp"
+            android:id="@+id/tvHeading2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/artists"
+            android:fontFamily="@font/spline_medium"
+            android:textSize="22sp"
+            android:paddingStart="15dp"
+            android:paddingEnd="10dp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/horizontalView" />
+
+        <HorizontalScrollView
+            android:id="@+id/horizontalView1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvHeading2">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/innerLayout1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="40dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card11"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardElevation="10dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/cardview_dark_background"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:id="@+id/image11"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@mipmap/ed_poster" />
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <TextView
+                    android:id="@+id/tv11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/ed_sheeran"
+                    android:fontFamily="@font/spline_regular"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    app:layout_constraintStart_toStartOf="@+id/card11"
+                    app:layout_constraintTop_toBottomOf="@+id/card11" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card21"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardElevation="10dp"
+                    app:layout_constraintStart_toEndOf="@+id/card11"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/cardview_dark_background"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:id="@+id/image21"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@mipmap/taylor_poster" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/tv21"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/taylor_swift"
+                    android:fontFamily="@font/spline_regular"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    app:layout_constraintStart_toStartOf="@+id/card21"
+                    app:layout_constraintTop_toBottomOf="@+id/card21" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card31"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardElevation="10dp"
+                    app:layout_constraintStart_toEndOf="@+id/card21"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/cardview_dark_background"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:id="@+id/image31"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@mipmap/weeknd_poster" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/tv31"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/the_weeknd"
+                    android:fontFamily="@font/spline_regular"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    app:layout_constraintStart_toStartOf="@+id/card31"
+                    app:layout_constraintTop_toBottomOf="@+id/card31" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card41"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="10dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardElevation="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/card31"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/cardview_dark_background"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:id="@+id/image41"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@mipmap/katy_poster" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/tv41"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/katy_perry"
+                    android:fontFamily="@font/spline_regular"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    app:layout_constraintStart_toStartOf="@+id/card41"
+                    app:layout_constraintTop_toBottomOf="@+id/card41" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </HorizontalScrollView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+
+</FrameLayout>
