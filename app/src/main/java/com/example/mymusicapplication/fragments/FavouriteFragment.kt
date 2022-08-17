@@ -6,19 +6,16 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.Toast
-import androidx.appcompat.view.menu.MenuBuilder
-import androidx.appcompat.view.menu.MenuPopupHelper
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mymusicapplication.activity.MainActivity
 import com.example.mymusicapplication.R
+import com.example.mymusicapplication.activity.MainActivity
 import com.example.mymusicapplication.adapter.MyRecyclerViewAdapter
 import com.example.mymusicapplication.databinding.FragmentFavouriteBinding
 import com.example.mymusicapplication.db.Song
@@ -34,9 +31,9 @@ import com.google.android.material.transition.MaterialContainerTransform
 
 class FavouriteFragment : Fragment() {
     lateinit var binding: FragmentFavouriteBinding
-    var UNSORTED = "unsorted"
-    var ASCENDING = "ascending"
-    var DESCENDING = "descending"
+    private var UNSORTED = "unsorted"
+    private var ASCENDING = "ascending"
+    private var DESCENDING = "descending"
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
@@ -95,9 +92,6 @@ class FavouriteFragment : Fragment() {
                         binding.noResultLayout.visibility = View.VISIBLE
                         binding.noSongsLayout.visibility = View.INVISIBLE
                     }
-                    //Toast.makeText(requireActivity().application, "Cannot perform search operation",Toast.LENGTH_SHORT).show()
-                    //binding.etSearch.focusable = View.NOT_FOCUSABLE
-                    //return@OnFocusChangeListener
                 }
             }
             else{
@@ -128,7 +122,6 @@ class FavouriteFragment : Fragment() {
                     songs
                 if(searchSongs.isNotEmpty()) {
                     binding.noResultLayout.visibility = View.INVISIBLE
-                    Log.i("searched song", searchSongs.toString())
                     val adapter1 = MyRecyclerViewAdapter(searchSongs, songViewModel,true, user)
                     binding.rvSearch.adapter = adapter1
                     binding.rvSearch.layoutManager = LinearLayoutManager(requireActivity().application)
@@ -137,7 +130,6 @@ class FavouriteFragment : Fragment() {
                 else{
                     if(searchText.isEmpty()) {
                         binding.noResultLayout.visibility = View.INVISIBLE
-                        //binding.tvNoResult.text = "No results found for \"$searchText\""
                     }
                     else
                         binding.noResultLayout.visibility = View.VISIBLE
@@ -154,7 +146,6 @@ class FavouriteFragment : Fragment() {
         })
 
         MainActivity.isMiniPlayerActive.observe(viewLifecycleOwner){
-            Log.i("Mini player status", it.toString())
             val scale = resources.displayMetrics.density
             val sizeDp = 200
             val padding = sizeDp*scale+0.5f
@@ -164,29 +155,22 @@ class FavouriteFragment : Fragment() {
         }
 
 
-        var count1 = 0
-        var count2 = 0
-        var count3 = 0
         binding.sort.setOnClickListener { it ->
             if(songs.isEmpty()){
-                //Toast.makeText(requireActivity().application, "Cannot perform sort operation",Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             val popup = PopupMenu(it.context, it)
             popup.setOnMenuItemClickListener {
                 when(it.itemId){
                     R.id.item1->{
-                        songs = sortSongs(songs, "title") as ArrayList<Song>
+                        songs = sortSongs(songs, "title")
                         when (titleSTATE) {
                             DESCENDING -> {
                                 titleSTATE = ASCENDING
                             }
                             ASCENDING -> {
-                                //count1++
-                                //if (count1 % 2 == 0) {
                                 songs.reverse()
                                 titleSTATE = DESCENDING
-                                //}
                             }
                             UNSORTED -> {
                                 titleSTATE = ASCENDING
@@ -204,17 +188,14 @@ class FavouriteFragment : Fragment() {
                         return@setOnMenuItemClickListener true
                     }
                     R.id.item2->{
-                        songs = sortSongs(songs, "album") as ArrayList<Song>
+                        songs = sortSongs(songs, "album")
                         when (albumSTATE) {
                             DESCENDING -> {
                                 albumSTATE = ASCENDING
                             }
                             ASCENDING -> {
-                                //count1++
-                                //if (count1 % 2 == 0) {
                                 songs.reverse()
                                 albumSTATE = DESCENDING
-                                //}
                             }
                             UNSORTED -> {
                                 albumSTATE = ASCENDING
@@ -232,17 +213,14 @@ class FavouriteFragment : Fragment() {
                         return@setOnMenuItemClickListener true
                     }
                     R.id.item3->{
-                        songs = sortSongs(songs, "artist") as ArrayList<Song>
+                        songs = sortSongs(songs, "artist")
                         when (artistSTATE) {
                             DESCENDING -> {
                                 artistSTATE = ASCENDING
                             }
                             ASCENDING -> {
-                                //count1++
-                                //if (count1 % 2 == 0) {
                                 songs.reverse()
                                 artistSTATE = DESCENDING
-                                //}
                             }
                             UNSORTED -> {
                                 artistSTATE = ASCENDING
@@ -272,7 +250,6 @@ class FavouriteFragment : Fragment() {
                 val mPopup = fieldMPopup.get(popup)
                 mPopup.javaClass.getDeclaredMethod("setForceShowIcon",Boolean::class.java)
                     .invoke(mPopup, true)
-                val helper = MenuPopupHelper(requireActivity().application, popup.menu as MenuBuilder)
             }
             catch (e: Exception){
                 Log.e("Main", "error showing menu icons: ", e)

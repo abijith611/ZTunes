@@ -25,7 +25,6 @@ class NotificationReceiver: BroadcastReceiver() {
     }
 
      private val mService = MusicService()
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context?, intent: Intent?) {
         DetailFragment()
         if(intent?.action!=null){

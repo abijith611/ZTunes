@@ -29,10 +29,8 @@ class LoginActivity : AppCompatActivity() {
         val dao = SongDatabase.getInstance(this).songDao
         val repository = SongRepository(dao)
         val songViewModel = ViewModelProvider(this, SongViewModelFactory(repository))[SongViewModel::class.java]
-        Log.i("userlog", songViewModel.getAllUserLog().toList().toString())
         if(songViewModel.getAllUserLog().isNotEmpty()) {
             val userLog = songViewModel.getAllUserLog().last()
-            Log.i("user", userLog.toString())
 
             if (userLog.isLoggedIn) {
                 val user = songViewModel.getUser(userLog.email)

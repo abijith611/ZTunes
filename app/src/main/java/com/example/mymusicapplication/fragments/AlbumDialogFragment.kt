@@ -93,7 +93,6 @@ class AlbumDialogFragment : DialogFragment() {
                                 )
                             }
                             playlists = songViewModel.getPlaylistForUser(user.email)
-                            Log.i("playlists", playlists.toMutableList().toString())
                             adapter = MyPlaylistRecyclerViewAdapter(playlists.toMutableList(),type.toString(), songViewModel,
                                 song, user)
                             binding.rvPlaylistDialog.adapter = adapter
@@ -119,10 +118,6 @@ class AlbumDialogFragment : DialogFragment() {
             }
         }
 
-
-        //Log.i("playlists", playlists.toString())
-
-
         binding.rvPlaylistDialog.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -143,11 +138,8 @@ class AlbumDialogFragment : DialogFragment() {
 
             override fun afterTextChanged(s: Editable?) {
                 val searchText = binding.etSearch.text.toString()
-                Log.i("search text",searchText)
                 playlists= songViewModel.getSearchPlaylists(searchText, user.email)
-                Log.i("searched song", playlists.toMutableList().toString())
                 if(playlists.isNotEmpty()) {
-                    Log.i("searched song", playlists.toMutableList().toString())
                     val adapter1 = MyPlaylistRecyclerViewAdapter(playlists.toMutableList(),type.toString(), songViewModel, song, user)
                     binding.rvPlaylistDialog.adapter = adapter1
                     binding.rvPlaylistDialog.layoutManager = LinearLayoutManager(requireActivity().application)
@@ -219,22 +211,6 @@ class AlbumDialogFragment : DialogFragment() {
                 view?.let { it1 -> Snackbar.make(it1,"Song Added", Snackbar.LENGTH_LONG).show() }
             }
         }
-
-//        MainActivity.isMiniPlayerActive.observe(viewLifecycleOwner){
-//            Log.i("Mini player status", it.toString())
-//            val scale = resources.displayMetrics.density
-//            val sizeDp = 125
-//            val padding = sizeDp*scale+0.5f
-//            if(MainActivity.isMiniPlayerActive.value == true){
-//                Log.i("setPadding", "setPadding")
-//                val param = binding.floatingActionButton.layoutParams as ViewGroup.MarginLayoutParams
-//                param.setMargins(0,0,200,300)
-//                binding.floatingActionButton.layoutParams = param
-//                binding.rvPlaylist.setPadding(0,0,0,padding.toInt())
-//            }
-//        }
-
-
         return binding.root
     }
 

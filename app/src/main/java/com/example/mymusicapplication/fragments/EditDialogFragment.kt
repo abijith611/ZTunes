@@ -9,9 +9,6 @@ import androidx.fragment.app.DialogFragment
 import com.example.mymusicapplication.databinding.FragmentEditDialogBinding
 
 class EditDialogFragment : DialogFragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
     lateinit var binding: FragmentEditDialogBinding
     override fun onCreateView(

@@ -1,7 +1,6 @@
 package com.example.mymusicapplication.adapter
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,17 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.example.mymusicapplication.activity.MainActivity.Companion.isMiniPlayerActive
-import com.example.mymusicapplication.service.MusicService
-import com.example.mymusicapplication.service.MusicService.Companion.mediaPlayerService
 import com.example.mymusicapplication.R
+import com.example.mymusicapplication.activity.MainActivity.Companion.isMiniPlayerActive
 import com.example.mymusicapplication.db.Song
 import com.example.mymusicapplication.fragments.DetailFragment
 import com.example.mymusicapplication.fragments.MiniPlayerFragment
+import com.example.mymusicapplication.service.MusicService
+import com.example.mymusicapplication.service.MusicService.Companion.mediaPlayerService
 
 class ImageAdapter(private val imageList: ArrayList<Song>, private val viewPager2: ViewPager2): RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
@@ -34,9 +32,8 @@ class ImageAdapter(private val imageList: ArrayList<Song>, private val viewPager
         return ImageViewHolder(view)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        Log.i("on bind", imageList.toString())
         when(imageList[position].title){
             imageList[1].title->holder.imageView.setImageResource(R.mipmap.shape_of_you_banner)
             imageList[2].title->holder.imageView.setImageResource(R.mipmap.love_banner)
@@ -52,13 +49,11 @@ class ImageAdapter(private val imageList: ArrayList<Song>, private val viewPager
 
         //holder.itemView.transitionName = currentSong.title
         holder.itemView.setOnClickListener {
-            var imageList1 = ArrayList<Song>()
+            val imageList1 = ArrayList<Song>()
             for(i in 0..3){
                 imageList1.add(imageList[i])
             }
-            Log.i("CLICK", "clicked")
-            Log.i("imageList", "position $position")
-            var position1 = position % 4
+            val position1 = position % 4
             val bundle = Bundle()
             bundle.putParcelable("song", currentSong)
             bundle.putParcelableArrayList("songList", imageList1)
@@ -67,11 +62,9 @@ class ImageAdapter(private val imageList: ArrayList<Song>, private val viewPager
             val miniFrag = MiniPlayerFragment()
             frag.arguments = bundle
             miniFrag.arguments = bundle
-            if (MusicService.mediaPlayerService.isPlaying || MusicService.STATE.value == "PAUSE") {
+            if (mediaPlayerService.isPlaying || MusicService.STATE.value == "PAUSE") {
                 if (MusicService.currentSongInstance?.song != currentSong.song) {
-                    MusicService.mediaPlayerService.stop()
-                } else {
-                    Log.i("mediarec", "same song")
+                   mediaPlayerService.stop()
                 }
             }
             val activity = it.context as AppCompatActivity
@@ -86,7 +79,6 @@ class ImageAdapter(private val imageList: ArrayList<Song>, private val viewPager
             }
             else{
                 activity.supportFragmentManager.beginTransaction()
-                    //.addSharedElement(holder.itemView, currentSong.title.toString())
                     .add(R.id.fragmentContainer, frag).addToBackStack(null).commit()
             }
         }

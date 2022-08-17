@@ -45,9 +45,7 @@ class MyRecyclerViewAdapter(private var songList: MutableList<Song>,var songView
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        //Log.i("onBindView","called")
         val currentSong: Song = songList[position]
         holder.imageView.setImageResource(currentSong.img)
         holder.artist.text = currentSong.artist
@@ -58,7 +56,6 @@ class MyRecyclerViewAdapter(private var songList: MutableList<Song>,var songView
 
         if (currentSongInstance != null) {
             if (currentSong.id == currentSongInstance!!.id) {
-                Log.i("current song", "current")
                 holder.title.setTextColor(Color.parseColor("#E94650"))
                 holder.artist.setTextColor(Color.parseColor("#E94650"))
             }
@@ -70,13 +67,11 @@ class MyRecyclerViewAdapter(private var songList: MutableList<Song>,var songView
             holder.fav.setOnClickListener {
                 if(!isFav(holder, fav, currentSong)){
                     songViewModel.addSongsFav(currentSong, fav[0])
-                    Log.i("Fav","${currentSong.title} added")
                     (it as ImageView).setImageResource(R.drawable.heart)
                     notifyDataSetChanged()
                 }
                 else{
                     songViewModel.removeSongsFav(currentSong,fav[0])
-                    Log.i("Fav","${currentSong.title} removed")
                     (it as ImageView).setImageResource(R.drawable.heart_un)
                     if(isFav){
                         val frag = FavouriteFragment()
@@ -95,7 +90,6 @@ class MyRecyclerViewAdapter(private var songList: MutableList<Song>,var songView
        // holder.itemView.transitionName = currentSong.title
         holder.itemView.setOnClickListener{
             SearchFragment.itemSelected.value = true
-            Log.i("CLICK","clicked")
             val bundle = Bundle()
             bundle.putParcelable("song",currentSong)
             bundle.putParcelableArrayList("songList",songList.toMutableList() as ArrayList<Song>)
@@ -108,9 +102,6 @@ class MyRecyclerViewAdapter(private var songList: MutableList<Song>,var songView
             if(MusicService.mediaPlayerService.isPlaying || MusicService.STATE.value=="PAUSE"){
                 if(currentSongInstance?.song != currentSong.song){
                     MusicService.mediaPlayerService.stop()
-                }
-                else{
-                    Log.i("mediarec","same song")
                 }
             }
 
@@ -146,9 +137,6 @@ class MyRecyclerViewAdapter(private var songList: MutableList<Song>,var songView
                 popupMenu.setOnMenuItemClickListener {
                     when (it.itemId) {
                         R.id.item1 -> {
-//                            val dialog = Dialog(activity, R.style.DialogStyle)
-//                            dialog.setContentView(R.layout.fragment_album_dialog)
-//                            dialog.show()
                             val dialog = AlbumDialogFragment()
                             dialog.setStyle(DialogFragment.STYLE_NORMAL,R.style.DialogStyle2)
                             val bundle = Bundle()
@@ -156,13 +144,6 @@ class MyRecyclerViewAdapter(private var songList: MutableList<Song>,var songView
                             bundle.putParcelable("song", currentSong)
                             dialog.arguments = bundle
                             dialog.show(activity.supportFragmentManager, "albumDialog")
-
-//                            val fragment = AlbumFragment()
-//                            fragment.arguments = bundle
-//                            activity.supportFragmentManager.beginTransaction()
-//                                .replace(R.id.fragmentContainer, fragment)
-//                                .addToBackStack("album")
-//                                .commit()
                             return@setOnMenuItemClickListener true
                         }
 
@@ -171,7 +152,6 @@ class MyRecyclerViewAdapter(private var songList: MutableList<Song>,var songView
                                 Snackbar.make(view,"Song already added 5 times!", Snackbar.LENGTH_SHORT).setAnchorView(snackBarAnchor).show()
                             else {
                                 Queue.queue.add(currentSong)
-                                Log.i("RV", snackBarAnchor.toString())
                                 Snackbar.make(view, "Song added to queue", Snackbar.LENGTH_SHORT)
                                     .setAnchorView(snackBarAnchor).show()
                             }

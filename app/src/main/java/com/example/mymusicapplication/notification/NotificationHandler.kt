@@ -29,15 +29,15 @@ class NotificationHandler(var context: Context) {
         var notificationManager:NotificationManager? = null
 
     }
+    private var CHANNEL_ID_2 = "CHANNEL_2"
     val mainActivity = MainActivity()
     val dao = SongDatabase.getInstance(context).songDao
     val repository = SongRepository(dao)
     val user = runBlocking{ repository.getUsers() }.last()
     private val fav = runBlocking { user.email?.let { repository.getFavForUser(it) } }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     fun showNotification(playPauseButton: Int, playbackSpeed:Float){
-        Log.i("mediaSession","$mediaSession ${mediaSession.sessionToken.toString()}")
         val intent = Intent(context, MainActivity::class.java).also {
             it.putExtra("user",user)
             it.putExtra("fragment","detail")
@@ -67,7 +67,7 @@ class NotificationHandler(var context: Context) {
             R.drawable.heart_un
         }
         notification = MusicService.currentSongInstance?.let {
-            NotificationCompat.Builder(context, DetailFragment.CHANNEL_ID_2)
+            NotificationCompat.Builder(context,CHANNEL_ID_2)
                 .setSmallIcon(it.img)
                 .setLargeIcon(picture)
                 .setContentTitle(it.title)
@@ -87,22 +87,21 @@ class NotificationHandler(var context: Context) {
 
         }
 
-        mediaSession?.setMetadata(
+        mediaSession.setMetadata(
             MediaMetadataCompat.Builder()
-            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, MusicService.mediaPlayerService.duration.toLong())
-            .build())
-        mediaSession?.setPlaybackState(
+                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, MusicService.mediaPlayerService.duration.toLong())
+                .build())
+        mediaSession.setPlaybackState(
             PlaybackStateCompat.Builder()
-            .setState(PlaybackStateCompat.STATE_PLAYING, MusicService.mediaPlayerService.currentPosition.toLong(),playbackSpeed)
-            .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
-            .build()
+                .setState(PlaybackStateCompat.STATE_PLAYING, MusicService.mediaPlayerService.currentPosition.toLong(),playbackSpeed)
+                .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+                .build()
         )
-        mediaSession?.setCallback(object: MediaSessionCompat.Callback(){
+        mediaSession.setCallback(object: MediaSessionCompat.Callback(){
             override fun onSeekTo(pos: Long) {
                 super.onSeekTo(pos)
-                Log.i("NotificationHandler","onSeek")
                 MusicService.mediaPlayerService.seekTo(pos.toInt())
-                mediaSession?.setPlaybackState(
+                mediaSession.setPlaybackState(
                     PlaybackStateCompat.Builder()
                         .setState(
                             PlaybackStateCompat.STATE_PLAYING,
@@ -115,21 +114,15 @@ class NotificationHandler(var context: Context) {
             }
 
         })
-
-        Log.i("notification", notification.toString())
         notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val notificationChannel = NotificationChannel(DetailFragment.CHANNEL_ID_2, DetailFragment.CHANNEL_ID_2, NotificationManager.IMPORTANCE_HIGH)
+        val notificationChannel = NotificationChannel(CHANNEL_ID_2, CHANNEL_ID_2, NotificationManager.IMPORTANCE_HIGH)
         notificationManager?.createNotificationChannel(notificationChannel)
-        notification?.setChannelId(DetailFragment.CHANNEL_ID_2)
+        notification?.setChannelId(CHANNEL_ID_2)
         notificationManager?.notify(0,notification?.build())
     }
 
-    fun release(){
-        Log.i("MediaSession",mediaSession?.isActive.toString())
-        mediaSession?.release()
-        Log.i("MediaSession",mediaSession?.isActive.toString())
-    }
+
 
 
 

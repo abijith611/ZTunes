@@ -58,10 +58,6 @@ class SongRepository(private val dao: SongDao) {
         return dao.updateUser(user)
     }
 
-    suspend fun deleteUser(user: User){
-        return dao.deleteUser(user)
-    }
-
     suspend fun getUsers(): Array<User>{
         return dao.getUsers()
     }
@@ -78,17 +74,10 @@ class SongRepository(private val dao: SongDao) {
         return dao.getFavListsForUser(userId)
     }
 
-    suspend fun deleteFavourite(favourite: Favourite){
-        return dao.deleteFavourite(favourite)
-    }
-
     suspend fun insertSongData(songData: SongData){
         return dao.insertSongData(songData)
     }
 
-    suspend fun deleteSongData(songData: SongData){
-        return dao.deleteSongData(songData)
-    }
 
     suspend fun updateSongData(songData: SongData){
         return dao.updateSongData(songData)

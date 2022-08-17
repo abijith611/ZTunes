@@ -68,7 +68,6 @@ class ListFragment : Fragment() {
 
     var collapsed:Boolean? = null
 
-    @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

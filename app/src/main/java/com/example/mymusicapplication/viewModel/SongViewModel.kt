@@ -23,7 +23,6 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
     init {
         if(getAllUsers().isEmpty()) {
             insertUser(User(0, "admin", "admin", "Admin", "9840123456", true))
-            Log.i("SongViewModel", getAllUsers().toList().toString())
         }
         if(allSongs.isEmpty()) {
             GlobalScope.launch {
@@ -71,7 +70,6 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
                         "EDM"
                     )
                 )
-                Log.i("db", "added")
                 repository.insertSong(
                     Song(
                         5,
@@ -127,7 +125,6 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
                         "Romantic"
                     )
                 )
-                Log.i("db", "added")
                 repository.insertSong(
                     Song(
                         10,
@@ -183,7 +180,6 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
                         "Party"
                     )
                 )
-                Log.i("db", "added")
                 repository.insertSong(
                     Song(
                         15,
@@ -239,7 +235,6 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
                         "Popular"
                     )
                 )
-                Log.i("db", "added")
                 repository.insertSong(
                     Song(
                         20,
@@ -306,7 +301,6 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
                         "Popular"
                     )
                 )
-                Log.i("db", "added")
             }
         }
     }
@@ -322,7 +316,6 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
             val playlists = runBlocking {
                 return@runBlocking repository.getPlaylistsForUser(userId!!)
             }
-            Log.i("ViewModel",playlists.toList().toString())
             return playlists
         }
 
@@ -374,7 +367,6 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
         val searchSongs = getSearchSongs(query)
         for(song in searchSongs){
             if(song.genre == genre){
-                Log.i("song found", song.toString())
                 finalSongArray.add(song)
             }
         }
@@ -387,7 +379,6 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
         val searchSongs = getSearchSongs(query)
         for(song in searchSongs){
             if(song.artist == artist){
-                Log.i("song found", song.toString())
                 finalSongArray.add(song)
             }
         }
@@ -404,7 +395,6 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
                 finalSongArray.add(song)
             }
         }
-        Log.i("SongViewModel","playlist search list = $finalSongArray")
         val arr: Array<Song> = emptyArray()
         return finalSongArray.toArray(arr)
     }
@@ -443,13 +433,10 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
         runBlocking {
             repository.insertUser(user)
             repository.insertUserLog(UserLog(0, user.email!!, user.isLoggedIn, LocalDateTime.now()))
-            Log.i("user inserted1", user.toString())
         }
-//        val user =getUser(user.email)
-//        Log.i("user inserted", user.toString())
     }
 
-    fun getAllUsers(): Array<User>{
+    private fun getAllUsers(): Array<User>{
         val users = runBlocking{
             return@runBlocking repository.getUsers()
         }
@@ -458,7 +445,6 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
 
     fun isAuthenticated(email: String, pwd: String): Int{
         val users = getAllUsers()
-        Log.i("vm1"," ${getAllUsers().toList()}")
         for(user in users){
             if(user.email == email){
                 return if(user.pwd == pwd){
@@ -517,13 +503,11 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
     fun addSongsFav(song: Song, favourite: Favourite){
         favourite.favList.add(song)
         runBlocking { repository.updateFavourite(favourite) }
-        Log.i("SongViewModel", "fav: ${favourite.favList}")
     }
 
     fun removeSongsFav(song: Song, favourite: Favourite){
         favourite.favList.remove(song)
         runBlocking { repository.updateFavourite(favourite) }
-        Log.i("SongViewModel", "fav: ${favourite.favList}")
     }
 
     fun getFavSearchSongs(userId: String?, query: String): Array<Song>{
@@ -546,15 +530,11 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
         runBlocking {
             repository.updateUser(user1)
         }
-        Log.i("vm", "$mobile $name ${getUser(user.email).toString()} ${getAllUsers().toList()}")
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCleared() {
-        Log.i("onCleared","inside")
         if(MainActivity.notActive.value == true){
-            Log.i("onCleared","true")
             NotificationHandler.notificationManager?.cancel(0)
             //NotificationHandler.notificationManager?.deleteNotificationChannel("CHANNEL_2")
         }
@@ -564,10 +544,6 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
     private fun insertSongData(songData: SongData){
         runBlocking{ repository.insertSongData(songData) }
     }
-
-//    private fun deleteSongData(songData: SongData){
-//        runBlocking { repository.deleteSongData(songData) }
-//    }
 
     fun getSongData(userId: String?): Array<SongData> {
         return runBlocking { repository.getSongData(userId!!) }

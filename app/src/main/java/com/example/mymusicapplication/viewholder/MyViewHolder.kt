@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mymusicapplication.databinding.FragmentListBinding
 import com.example.mymusicapplication.databinding.ListItemBinding
 
-class MyViewHolder(private var binding: ListItemBinding): RecyclerView.ViewHolder(binding.root) {
+class MyViewHolder(binding: ListItemBinding): RecyclerView.ViewHolder(binding.root) {
     val imageView = binding.imageView
     val title = binding.tvTitle
     val artist = binding.tvArtist

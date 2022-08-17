@@ -5,7 +5,7 @@ import com.example.mymusicapplication.db.Song
 class Queue {
     companion object{
 
-        var queue = ArrayList<Song>()//ArrayList<Song>()
+        var queue = ArrayList<Song>()
         var played = ArrayList<Song>()
 
         fun getCount(currentSong:Song): Int{

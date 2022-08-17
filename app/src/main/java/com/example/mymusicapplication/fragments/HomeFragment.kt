@@ -38,7 +38,6 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         enterTransition = MaterialFadeThrough()
-        //exitTransition = MaterialFadeThrough()
         val activity = activity as MainActivity
         val binding = FragmentHomeBinding.inflate(layoutInflater)
         val dao = SongDatabase.getInstance(requireActivity().application).songDao
@@ -55,10 +54,6 @@ class HomeFragment : Fragment() {
         imageList.add(songsRomantic[0])
         imageList.add(songsParty[0])
         imageList.add(songsPopular[0])
-//        imageList[1].img = R.mipmap.shape_of_you_banner
-//        imageList[2].img = R.mipmap.on_the_floor_banner
-//        imageList[3].img = R.mipmap.roar_banner
-        Log.i("imageList",imageList.toString())
         adapter = ImageAdapter(imageList, viewPager2)
         viewPager2.adapter = adapter
         viewPager2.offscreenPageLimit = 3
@@ -69,7 +64,6 @@ class HomeFragment : Fragment() {
         viewPager2.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                //binding.tvInfo.text = imageList[position].title
                 handler.removeCallbacks(runnable)
                 handler.postDelayed(runnable, 5000)
             }
@@ -109,12 +103,10 @@ class HomeFragment : Fragment() {
         }
 
         MainActivity.isMiniPlayerActive.observe(viewLifecycleOwner){
-            Log.i("Mini player status", it.toString())
             val scale = resources.displayMetrics.density
             val sizeDp = 65
             val padding = sizeDp*scale+0.5f
             if(MainActivity.isMiniPlayerActive.value == true){
-                Log.i("setPadding", "setPadding")
                 binding.rootLayout.setPadding(0,0,0,padding.toInt())
             }
         }
@@ -145,8 +137,6 @@ class HomeFragment : Fragment() {
             val frag = QueueFragment()
             activity.supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer,frag).addToBackStack(null).commit()
         }
-
-        // Inflate the layout for this fragment
         return binding.root
     }
 
@@ -191,23 +181,6 @@ class HomeFragment : Fragment() {
     private val runnable = Runnable{
         viewPager2.currentItem = viewPager2.currentItem + 1
     }
-
-//    private fun init(){
-//        viewPager2 = requireView().findViewById(R.id.viewPager2)
-//        handler = Handler(Looper.myLooper()!!)
-//        imageList = ArrayList()
-//
-//        imageList.add(R.raw.icon)
-//        imageList.add(R.raw.divide_cover)
-//
-//        adapter = ImageAdapter(imageList, viewPager2)
-//        viewPager2.adapter = adapter
-//        viewPager2.offscreenPageLimit = 3
-//        viewPager2.clipToPadding = false
-//        viewPager2.clipChildren = false
-//        viewPager2.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
-//
-//    }
 
     private fun setupTransformer(){
         val transformer = CompositePageTransformer()

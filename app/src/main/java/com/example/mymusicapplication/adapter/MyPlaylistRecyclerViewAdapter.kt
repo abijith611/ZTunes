@@ -1,12 +1,12 @@
 package com.example.mymusicapplication.adapter
 
+
 import android.app.Dialog
 import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -19,17 +19,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mymusicapplication.R
 import com.example.mymusicapplication.activity.MainActivity
 import com.example.mymusicapplication.databinding.AlbumListItemBinding
-
-
 import com.example.mymusicapplication.db.Playlist
 import com.example.mymusicapplication.db.Song
 import com.example.mymusicapplication.db.User
-import com.example.mymusicapplication.fragments.AlbumFragment
 import com.example.mymusicapplication.fragments.AlbumFragment.Companion.adapterUpdate
 import com.example.mymusicapplication.fragments.AlbumFragment.Companion.songAdded
 import com.example.mymusicapplication.fragments.ListFragment
 import com.example.mymusicapplication.service.MusicService
-import com.example.mymusicapplication.service.MusicService.Companion.songChanged
 import com.example.mymusicapplication.viewModel.SongViewModel
 import com.example.mymusicapplication.viewholder.MyPlaylistViewHolder
 import com.google.android.material.snackbar.Snackbar
@@ -48,8 +44,7 @@ class MyPlaylistRecyclerViewAdapter(private var albumList: List<Playlist>, priva
         if(type=="selection_view"){holder.options.visibility = View.INVISIBLE}
         holder.options.setOnClickListener {
             val activity = it.context.scanForActivity()
-            var context = it.context
-            Log.i("PlaylistAdapter","clicked")
+            val context = it.context
             val popupMenu = PopupMenu(activity, it)
             popupMenu.setOnMenuItemClickListener {
                 when (it.itemId) {
@@ -66,7 +61,7 @@ class MyPlaylistRecyclerViewAdapter(private var albumList: List<Playlist>, priva
                         }
                         playlistName.setText(albumList[position].name)
                         playlistName.onFocusChangeListener =
-                            View.OnFocusChangeListener { v, hasFocus -> if(hasFocus){
+                            View.OnFocusChangeListener { _, hasFocus -> if(hasFocus){
                                 playlistName.hint = ""
                                 }
                             }
@@ -103,10 +98,8 @@ class MyPlaylistRecyclerViewAdapter(private var albumList: List<Playlist>, priva
                     R.id.item2->{
                         songViewModel.deletePlaylist(albumList[position])
                         (albumList.toMutableList() as ArrayList<Playlist>).remove(albumList[position])
-                        Log.i("Adapter",albumList.toString())
                         notifyItemRemoved(position)
                         updateAdapter(songViewModel.getPlaylistForUser(user.email).toMutableList())
-                        //activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.fragmentContainer, AlbumFragment())?.commit()
                         return@setOnMenuItemClickListener true
                     }
 
@@ -131,7 +124,6 @@ class MyPlaylistRecyclerViewAdapter(private var albumList: List<Playlist>, priva
             val activity = it.context.scanForActivity()
             val ft =activity?.supportFragmentManager
                 ?.beginTransaction()
-                //?.addSharedElement(holder.itemView, albumList[position].name.toString())
                 ?.replace(R.id.fragmentContainer,listFragment)
 
 
@@ -142,20 +134,13 @@ class MyPlaylistRecyclerViewAdapter(private var albumList: List<Playlist>, priva
             if(type == "selection_view"){
 
                 if(!song?.let { it1 -> isSongExisting(it1,albumList[position].playlist) }!!) {
-                    Log.i("nextList", MusicService.nextPlayingList.toString())
                     if (MusicService.songList.value != null) {
                         if (MainActivity().checkList(
                                 MusicService.songList.value,
                                 albumList[position].playlist
                             )
                         ) {
-                            Log.i("nextPlaying", "playing")
-                            //MusicService.nextPlayingList!!.toMutableList().add(song!!)
                             MusicService.songList.value = albumList[position].playlist
-                            //MusicService.songList.value!!.add(song!!)
-                            //MusicService.songList.value = arrayList
-                            //songChanged.value = true
-
                         }
                     }
                     song?.let { it1 -> songViewModel.addSongsPlaylist(it1, albumList[position]) }
@@ -164,10 +149,6 @@ class MyPlaylistRecyclerViewAdapter(private var albumList: List<Playlist>, priva
                     songAdded.value = true
 
                     Snackbar.make(it, "Song Added", Snackbar.LENGTH_SHORT).setAnchorView(R.id.snack_bar_anchor).show()
-//                    activity?.supportFragmentManager?.findFragmentByTag("albumDialog").let {
-//                        (it as AlbumDialogFragment).dismiss()
-//                    }
-                    //activity.onBackPressed()
                 }
                 else{
                     Snackbar.make(it,"Song already in album",Snackbar.LENGTH_SHORT).setAnchorView(R.id.snack_bar_anchor).show()
@@ -185,8 +166,6 @@ class MyPlaylistRecyclerViewAdapter(private var albumList: List<Playlist>, priva
     }
 
     override fun getItemCount(): Int {
-//        if(albumList.isNotEmpty())
-//        albumList = songViewModel.getPlaylistForUser(user.email).toMutableList()
         return albumList.size
     }
 
@@ -207,7 +186,7 @@ class MyPlaylistRecyclerViewAdapter(private var albumList: List<Playlist>, priva
         }
     }
 
-    fun updateAdapter(playlistList: List<Playlist>){
+    private fun updateAdapter(playlistList: List<Playlist>){
         albumList = playlistList
         notifyDataSetChanged()
         adapterUpdate.value = true

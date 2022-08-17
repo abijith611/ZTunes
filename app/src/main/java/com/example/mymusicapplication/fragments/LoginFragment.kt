@@ -2,7 +2,6 @@ package com.example.mymusicapplication.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,8 +42,6 @@ class LoginFragment : Fragment() {
                     MainActivity.isMiniPlayerActive.value = false
                     val user = songViewModel.getUser(email) as User
                     songViewModel.userLogIn(user)
-                    //songViewModel.updateRecentUser(user)
-                    Log.i("users", songViewModel.getAllUsers().toList().toString())
                     Intent(requireActivity().application, MainActivity::class.java).apply {
                         songViewModel.userLogIn(user)
                         this.putExtra("user",user)

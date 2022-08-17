@@ -74,12 +74,10 @@ class LimitedListFragment : Fragment() {
         }
 
         MainActivity.isMiniPlayerActive.observe(viewLifecycleOwner){
-            Log.i("Mini player status", it.toString())
             val scale = resources.displayMetrics.density
             val sizeDp = 165
             val padding = sizeDp*scale+0.5f
             if(MainActivity.isMiniPlayerActive.value == true){
-                Log.i("setPadding", "setPadding")
                 binding.rvList.setPadding(0,10,0,padding.toInt())
             }
         }
@@ -87,7 +85,6 @@ class LimitedListFragment : Fragment() {
         NotificationReceiver.STATE.observe(viewLifecycleOwner){
             if(it.equals("PREVIOUS") || it.equals("NEXT")){
                 (binding.rvList.adapter as RecyclerView.Adapter).notifyDataSetChanged()
-                //scrollToPosition(scrollPosition, topViewRV)
             }
             if(it== NotificationReceiver.ACTION_FAV){
                 (binding.rvList.adapter as RecyclerView.Adapter).notifyDataSetChanged()
@@ -96,7 +93,6 @@ class LimitedListFragment : Fragment() {
         MusicService.songState.observe(viewLifecycleOwner){
             if(it.equals("PREV") || it.equals("NEXT")){
                 (binding.rvList.adapter as RecyclerView.Adapter?)?.notifyDataSetChanged()
-                //scrollToPosition(scrollPosition, topViewRV)
             }
             if(it== NotificationReceiver.ACTION_FAV){
                 (binding.rvList.adapter as RecyclerView.Adapter?)?.notifyDataSetChanged()
@@ -122,7 +118,6 @@ class LimitedListFragment : Fragment() {
     private fun getSongList(songViewModel: SongViewModel, user: User): ArrayList<Song>{
         val songData =songViewModel.getSongData(user.email)
         var songList = arrayListOf<Song>()
-        Log.i("HomeSongData", songList.toList().toString())
         val title = arguments?.getString("title")
         if(title == "recent"){
             binding.textTitle.text = "Recently Played"
@@ -138,7 +133,6 @@ class LimitedListFragment : Fragment() {
                 hashMap[song] = c
             }
             val result = hashMap.toList().sortedBy{ (_,value) -> value}.toMap()
-            //result = result.toList().reversed().toMap()
             val arrayList = arrayListOf<Song>()
             for(entry in result){
                 arrayList.add(entry.key)

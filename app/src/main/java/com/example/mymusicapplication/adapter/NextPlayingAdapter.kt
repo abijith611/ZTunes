@@ -64,12 +64,6 @@ class NextPlayingAdapter(private var songList: ArrayList<Song>, var context: Con
                             dialog.setStyle(DialogFragment.STYLE_NORMAL,R.style.DialogStyle2)
                             dialog.arguments = bundle
                             dialog.show(activity.supportFragmentManager, "albumDialog")
-//                            val fragment = AlbumFragment()
-//                            fragment.arguments = bundle
-//                            activity.supportFragmentManager.beginTransaction()
-//                                .replace(R.id.fragmentContainer, fragment)
-//                                .addToBackStack("album")
-//                                .commit()
                             return@setOnMenuItemClickListener true
                         }
                         R.id.item2 -> {
@@ -78,7 +72,6 @@ class NextPlayingAdapter(private var songList: ArrayList<Song>, var context: Con
                             else {
                                 Queue.queue.add(currentSong)
                                 activity.findViewById<FragmentContainerView>(R.id.miniPlayerFragmentContainer)
-                                Log.i("RV", snackBarAnchor.toString())
                                 Snackbar.make(view, "Song added to queue", Snackbar.LENGTH_SHORT)
                                     .setAnchorView(snackBarAnchor).show()
                                 val frag = QueueFragment()
@@ -109,12 +102,10 @@ class NextPlayingAdapter(private var songList: ArrayList<Song>, var context: Con
 
        // holder.itemView.transitionName = currentSong.title
         holder.itemView.setOnClickListener{
-            Log.i("CLICK","clicked")
             val bundle = Bundle()
             bundle.putParcelable("song",currentSong)
             bundle.putParcelableArrayList("songList",songList.toMutableList() as java.util.ArrayList<Song>)
             bundle.putInt("position",position)
-           // MusicService.songList = songList
             val frag = DetailFragment()
             val miniFrag = MiniPlayerFragment()
             frag.arguments = bundle
@@ -123,22 +114,14 @@ class NextPlayingAdapter(private var songList: ArrayList<Song>, var context: Con
                 if(MusicService.currentSongInstance?.song != currentSong.song){
                     MusicService.mediaPlayerService.stop()
                 }
-                else{
-                    Log.i("mediarec","same song")
-                }
             }
 
             val activity = it.context as AppCompatActivity
 
             if(MainActivity.isMiniPlayerActive.value==true){
-                //activity.onBackPressed()
-                //isMiniPlayerActive.value = true
                 if(MusicService.mediaPlayerService.isPlaying){
                     return@setOnClickListener
                 }
-//                notificationHandler.release()
-//                notificationHandler.showNotification(R.drawable.ic_simple_pause_,1F)
-
                 MusicService().createMediaPlayer(currentSong, it.context)
                 activity.supportFragmentManager.beginTransaction()
                     .replace(R.id.miniPlayerFragmentContainer,miniFrag)
@@ -147,64 +130,17 @@ class NextPlayingAdapter(private var songList: ArrayList<Song>, var context: Con
             }
             else{
                 activity.supportFragmentManager.beginTransaction()
-                    //.addSharedElement(holder.itemView, currentSong.title.toString())
                     .add(R.id.fragmentContainer, frag).addToBackStack(null).commit()
             }
             QueueFragment.upNextItemClick.value = true
-
-
         }
-
-
-
-
-//        holder.itemView.setOnClickListener {
-//            Intent(context, MusicService::class.java).also {
-//                it.putExtra("position", position)
-//                it.putParcelableArrayListExtra("songList", songList)
-//                activity.startService(it)
-//                MusicService.mediaPlayerService.stop()
-//                QueueDialogFragment.queueSongState.value = true
-//            }
-//        }
-
-//        holder.options.setOnClickListener {
-//            val activity = it.context.scanForActivity()
-//            val popupMenu = PopupMenu(activity,it)
-//            popupMenu.setOnMenuItemClickListener {
-//                when(it.itemId){
-//                    R.id.item1 -> {
-//                        Queue.queue.remove(currentSong)
-//                        notifyItemRemoved(position)
-//                        val dFrag = activity?.supportFragmentManager?.findFragmentByTag("queueDialog") as DialogFragment
-//                        if(Queue.queue.isEmpty()){
-//                            val tv=dFrag.view?.findViewById<TextView>(R.id.tvNoSongs)
-//                            tv?.visibility = View.VISIBLE
-//
-//                        }
-//                        return@setOnMenuItemClickListener true
-//                    }
-//                    else -> return@setOnMenuItemClickListener false
-//                }
-//            }
-//            popupMenu.inflate(R.menu.queue_menu)
-//            popupMenu.gravity = Gravity.END
-//            popupMenu.show()
-//        }
-
     }
 
     override fun getItemCount(): Int {
         return songList.size
     }
 
-    fun Context.scanForActivity(): AppCompatActivity? {
-        return when (this) {
-            is AppCompatActivity -> this
-            is ContextWrapper -> baseContext.scanForActivity()
-            else -> null
-        }
-    }
+
 
 
 

@@ -48,17 +48,10 @@ class MyPlaylistItemRecyclerViewAdapter(private var songList: MutableList<Song>,
         return MyViewHolder(binding)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     @SuppressLint("CutPasteId", "NotifyDataSetChanged")
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        //var playlistList = emptyArray<Playlist>()
-//        if(type=="playlist"){
-//           playlist = songViewModel.getPlaylistForUser(user?.email)[0]
-//           songList = playlist!!.playlist
-//            MusicService.songList = songList
-//        }
         var snackBarAnchor: View?
-        Log.i("onBindView","called")
         val currentSong: Song = songList[position]
         holder.imageView.setImageResource(currentSong.img)
         holder.artist.text = currentSong.artist
@@ -97,7 +90,6 @@ class MyPlaylistItemRecyclerViewAdapter(private var songList: MutableList<Song>,
         }
 
 
-        //holder.itemView.transitionName = currentSong.title
         holder.itemView.setOnClickListener{
             if(type=="playlist"){
                 MusicService.currentPlaylist = playlist!!.name
@@ -106,7 +98,6 @@ class MyPlaylistItemRecyclerViewAdapter(private var songList: MutableList<Song>,
                 MusicService.currentPlaylist = null
             }
             SearchFragment.itemSelected.value = true
-            Log.i("CLICK","clicked")
             val bundle = Bundle()
             bundle.putParcelable("song",currentSong)
             bundle.putParcelableArrayList("songList",songList.toMutableList() as ArrayList<Song>)
@@ -119,9 +110,6 @@ class MyPlaylistItemRecyclerViewAdapter(private var songList: MutableList<Song>,
             if(mediaPlayerService.isPlaying || MusicService.STATE.value=="PAUSE"){
                 if(currentSongInstance?.song != currentSong.song){
                     mediaPlayerService.stop()
-                }
-                else{
-                    Log.i("mediarec","same song")
                 }
             }
 
@@ -139,7 +127,6 @@ class MyPlaylistItemRecyclerViewAdapter(private var songList: MutableList<Song>,
             }
             else{
                 activity.supportFragmentManager.beginTransaction()
-                    //.addSharedElement(holder.itemView, currentSong.title.toString())
                     .add(R.id.fragmentContainer, frag).addToBackStack(null).commit()
             }
         }
@@ -165,12 +152,6 @@ class MyPlaylistItemRecyclerViewAdapter(private var songList: MutableList<Song>,
                             dialog.arguments = bundle
                             dialog.activity?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                             dialog.show(activity.supportFragmentManager, "albumDialog")
-//                            val fragment = AlbumFragment()
-//                            fragment.arguments = bundle
-//                            activity.supportFragmentManager.beginTransaction()
-//                                .replace(R.id.fragmentContainer, fragment)
-//                                .addToBackStack("album")
-//                                .commit()
                             return@setOnMenuItemClickListener true
                         }
                         R.id.item2 -> {
@@ -179,7 +160,6 @@ class MyPlaylistItemRecyclerViewAdapter(private var songList: MutableList<Song>,
                             else {
                                 Queue.queue.add(currentSong)
                                 activity.findViewById<FragmentContainerView>(R.id.miniPlayerFragmentContainer)
-                                Log.i("RV", snackBarAnchor.toString())
                                 Snackbar.make(view, "Song added to queue", Snackbar.LENGTH_SHORT)
                                     .setAnchorView(snackBarAnchor).show()
 
@@ -204,7 +184,6 @@ class MyPlaylistItemRecyclerViewAdapter(private var songList: MutableList<Song>,
             }
             if(type=="playlist"){
                 popupMenu.setOnMenuItemClickListener {
-                    var isPlayingAlbum = false
                     when(it.itemId){
                         R.id.item1->{
                             playlist?.let { it1 ->
@@ -212,42 +191,10 @@ class MyPlaylistItemRecyclerViewAdapter(private var songList: MutableList<Song>,
                                     it1
                                 )
                             }
-//                            if (MusicService.songList.value != null) {
-//                                var musicList = MusicService.songList.value
-//                                if (MainActivity().checkList(
-//                                        musicList,
-//                                        songList
-//                                    )
-//                                ) {
-//                                    Log.i("equal", "true")
-//                                    isPlayingAlbum = true
-////                                    MusicService.songList.value!!.remove(currentSong)
-//                                    //MusicService.songList.value = arrayList
-//                                    //MusicService.songChanged.value = true
-//                                }
-//                            }
-
                             (songList.toMutableList() as ArrayList<Song>).remove(currentSong)
-//                            if(isPlayingAlbum){
-//                                MusicService.songList.value = songList
-//                            }
                             if(MusicService.currentPlaylist!=null && MusicService.currentPlaylist==playlist!!.name){
                                MusicService.songList.value = songList
-                                Log.i("equal", "true")
                             }
-                            Log.i("isPlaying", isPlayingAlbum.toString())
-                            if(MusicService.songList.value!=null)
-                            Log.i("Delete", "${songList.size} ${MusicService.songList.value!!.size}  ")
-                            for(song in songList){
-                                Log.i("Songs", song.title.toString())
-                            }
-                            if(MusicService.songList.value!=null)
-                            for(song in MusicService.songList.value!!){
-                                Log.i("Songs1", song.title.toString())
-                            }
-
-                            Log.i("RVDelete", "${currentSong.title.toString()} ${songList==MusicService.songList.value}")
-                            //updateAdapter(songList)
                             (ListFragment.songs.toMutableList() as ArrayList<Song>).remove(currentSong)
                             notifyItemRemoved(position)
                             ListFragment.ivState.value = false
@@ -278,8 +225,4 @@ class MyPlaylistItemRecyclerViewAdapter(private var songList: MutableList<Song>,
             false
         }
     }
-
-
-
-
 }

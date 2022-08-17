@@ -49,7 +49,6 @@ class SearchFragment : Fragment() {
 
 
     @SuppressLint("RestrictedApi", "NotifyDataSetChanged")
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

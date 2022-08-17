@@ -32,15 +32,12 @@ import com.google.android.material.transition.MaterialFadeThrough
 
 class AccountFragment : Fragment() {
 
-    private val detailsUpdate = MutableLiveData(false)
-
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         enterTransition = MaterialFadeThrough()
-        //exitTransition = MaterialFadeThrough()
         val binding = FragmentAccountBinding.inflate(layoutInflater)
         val user = activity?.intent?.getParcelableExtra<User>("user")
         val dao = SongDatabase.getInstance(requireActivity().application).songDao
@@ -49,19 +46,8 @@ class AccountFragment : Fragment() {
         var user1= user?.let { songViewModel.getUser(it.email) }
         if (user1 != null) {
             binding.tvName.text = user1.name
-//            binding.tvUsername.text = user1.email
-//            binding.tvMobile.text = user1.mobileNumber
         }
-//        detailsUpdate.observe(viewLifecycleOwner){
-//            if(it==true){
-//                Snackbar.make(requireView(), "User details updated!!",Snackbar.LENGTH_SHORT)
-//                    .setAnchorView(MainActivity.snackBarAnchor).show()
-//                user1=songViewModel.getUser(user.userId)
-//                binding.tvName.text = user1?.name
-//                binding.tvUsername.text = user1?.email
-//                binding.tvMobile.text = user1?.mobileNumber
-//            }
-//        }
+
 
         binding.ivForward.setOnClickListener {
             val fragment = FavouriteFragment()
@@ -99,33 +85,17 @@ class AccountFragment : Fragment() {
             dialog.show()
             val etName = dialog.findViewById<EditText>(R.id.etName)
             val etMobile = dialog.findViewById<EditText>(R.id.etMobile)
-            //val etEmail = dialog.findViewById<EditText>(R.id.etEmail)
             val cancelButton = dialog.findViewById<TextView>(R.id.cancelButton)
             val okButton = dialog.findViewById<TextView>(R.id.okButton)
             val existingName = user1?.name
             val existingMobile = user1?.mobileNumber
             etName?.setText(existingName)
             etMobile?.setText(existingMobile)
-
-
-//            if(etEmail.text.isEmpty()){
-//                etEmail.error = "The field is Empty!"
-//                isError = true
-//            }
-//            if(etEmail.text.length > 30){
-//                etEmail.error = "Too long!"
-//                isError = true
-//            }
-//            if(!etEmail.text.matches( Regex("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$"))){
-//                etEmail.error = "Enter the correct email format!"
-//                isError = true
-//            }
             cancelButton?.setOnClickListener {
                 dialog.cancel()
             }
             okButton?.setOnClickListener inner@{
                 var isError = false
-                Log.i("okButton", "buttonClick")
                 if(!validator.isValidName(etName.text.toString())){
                     etName.error = "Invalid Name!"
                     if(etName.text.length > 30)
@@ -137,10 +107,8 @@ class AccountFragment : Fragment() {
                     isError = true
                 }
                 if(!isError){
-                    Log.i("okButton", "noError")
                     val name = etName.text.toString()
                     val mob = etMobile.text.toString()
-                    //val email = etEmail.text.toString()
                     if (user != null) {
                         songViewModel.updateUser(user, name, mob)
                     }
@@ -161,7 +129,6 @@ class AccountFragment : Fragment() {
         }
 
         MainActivity.isMiniPlayerActive.observe(viewLifecycleOwner){
-            Log.i("Mini player status", it.toString())
             val scale = resources.displayMetrics.density
             val sizeDp = 150
             val padding = sizeDp*scale+0.5f
@@ -178,8 +145,6 @@ class AccountFragment : Fragment() {
             .setAnchorView(MainActivity.snackBarAnchor).show()
         val user1=songViewModel.getUser(user.email)
         binding.tvName.text = user1?.name
-//        binding.tvUsername.text = user1?.email
-//        binding.tvMobile.text = user1?.mobileNumber
     }
     }
 

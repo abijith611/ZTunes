@@ -46,7 +46,6 @@ companion object{
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.i("QueueOnCreate", "onCreate")
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.Y,true)
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.Y,false)
         binding = FragmentQueueDialogBinding.inflate(layoutInflater)
@@ -55,7 +54,6 @@ companion object{
         val repository = SongRepository(dao)
         val songViewModel = ViewModelProvider(this, SongViewModelFactory(repository))[SongViewModel::class.java]
         val adapter = QueueRecyclerViewAdapter(Queue.queue, songViewModel, user, requireActivity().application, activity as MainActivity)
-        //binding.tvNoSongs.visibility = View.INVISIBLE
         if(currentSongInstance==null){
             binding.nowPlayingLayout.visibility = View.INVISIBLE
             setQueueConstraints()
@@ -105,14 +103,9 @@ companion object{
         itemTouchHelper.attachToRecyclerView(binding.rvQueue)
         MusicService.firstSongPlayed.observe(viewLifecycleOwner){
             if(it==true){
-                Log.i("rv","removed 0")
                 adapter.notifyItemRemoved(0)
             }
         }
-
-
-
-        // Inflate the layout for this fragment
         return binding.root
     }
     private val simpleCallback = object: ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END, 0){
@@ -134,9 +127,9 @@ companion object{
 
     }
     private fun setSongDetails(){
-        binding.tvTitle.text = MusicService.currentSongInstance?.title
-        binding.tvArtist.text = MusicService.currentSongInstance?.artist
-        MusicService.currentSongInstance?.let { binding.imageView.setImageResource(it.img) }
+        binding.tvTitle.text = currentSongInstance?.title
+        binding.tvArtist.text = currentSongInstance?.artist
+        currentSongInstance?.let { binding.imageView.setImageResource(it.img) }
         setNextSongDetails()
     }
 
@@ -147,27 +140,17 @@ companion object{
         else
             MusicService.songList.value
 
-        if(nextSongs!!.isEmpty()){
 
-        }
-
-        Log.i("nextSongs",nextSongs.toString())
-
-        var position = getPosition(nextSongs.toMutableList(), currentSongInstance!!)
+        var position = getPosition(nextSongs!!.toMutableList(), currentSongInstance!!)
         if(currentSongInstance in Queue.played && currentSongInstance!= Queue.played[0]){
             position = getPosition(nextSongs, Queue.played[0])
         }
-        var subList  = mutableListOf<Song>()
-        if(position<nextSongs.size-1){
-            subList =nextSongs.toMutableList().subList(position+1, nextSongs.size)
-            Log.i("Pos","$position ${nextSongs.size-1}")
-        }
-        else
-            subList = nextSongs.toMutableList().subList(0, nextSongs.size-1)
-//        if(nextSongs.size - subList.size > 1){
-//             subList.addAll(nextSongs.subList(0,nextSongs.size - subList.size))
-//        }
-        Log.i("Queue", "$nextSongs $subList $position ${nextSongs.size-1}")
+
+        val subList = if(position<nextSongs.size-1){
+            nextSongs.toMutableList().subList(position+1, nextSongs.size)
+        } else
+            nextSongs.toMutableList().subList(0, nextSongs.size-1)
+
         val emptyArrayList = ArrayList<Song>()
         for(song in subList){
             emptyArrayList.add(song)
@@ -185,12 +168,10 @@ companion object{
             constraintSet.clone(parent)
             constraintSet.connect(R.id.upNextLayout, ConstraintSet.TOP, R.id.nowPlayingLayout, ConstraintSet.BOTTOM)
             constraintSet.applyTo(parent)
-            //binding.tvNoSongs.visibility = View.VISIBLE
         }
-        else{
+        else
             binding.queueLayout.visibility = View.VISIBLE
-            //binding.tvNoSongs.visibility = View.VISIBLE
-        }
+
     }
 
     private fun setQueueConstraints(){

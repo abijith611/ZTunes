@@ -60,35 +60,18 @@ class SignupFragment : Fragment() {
                 binding.etPwd.error = "The password must contain\n 8-16 character in length\n At least 1 upper case character\n At least 1 lower case letter\n At least 1 special character\n At least 1 number"
                 isError = true
             }
-//            if(email.isEmpty()){
-//                binding.etEmail.error = "The field is empty!"
-//                isError = true
-//            }
-//            if(mob.isEmpty()){
-//                binding.etMob.error = "The field is empty!"
-//                isError = true
-//            }
-//            if(name.isEmpty()){
-//                binding.etName.error = "The field is empty!"
-//                isError = true
-//            }
             if(!validator.isValidName(name)){
                 binding.etName.error = "Invalid Name!"
                 if(name.length > 30)
                     binding.etName.error = "Name too long!!"
                 isError = true
             }
-//            if(email.length > 30){
-//                binding.etEmail.error = "Too long!"
-//                isError = true
-//            }
             if(isError){
                 return@setOnClickListener
             }
 
             val user = User(0,email,pwd,name,mob,true)
             songViewModel.insertUser(user)
-            //songViewModel.insertRecentUser(user)
             Intent(requireActivity().application, MainActivity::class.java).apply {
                 this.putExtra("user",user)
                 startActivity(this)

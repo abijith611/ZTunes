@@ -11,10 +11,8 @@ import com.example.mymusicapplication.R
 import com.example.mymusicapplication.notification.NotificationHandler
 
 class AudioBecomingNoisyReceiver: BroadcastReceiver() {
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context?, intent: Intent?) {
         if(intent?.action == android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
-            Log.i("AudioBecomingNoisy", "noisy")
             MusicService.STATE.value = "PAUSE"
             if (MusicService.mediaPlayerService.isPlaying) {
                 MusicService.mediaPlayerService.pause()
