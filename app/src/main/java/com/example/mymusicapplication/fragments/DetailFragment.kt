@@ -22,10 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.mymusicapplication.R
 import com.example.mymusicapplication.activity.MainActivity
 import com.example.mymusicapplication.databinding.FragmentDetailBinding
-import com.example.mymusicapplication.db.Song
-import com.example.mymusicapplication.db.SongDatabase
-import com.example.mymusicapplication.db.SongRepository
-import com.example.mymusicapplication.db.User
+import com.example.mymusicapplication.db.*
 import com.example.mymusicapplication.listener.BackKeyListener
 import com.example.mymusicapplication.listener.MusicServiceListener
 import com.example.mymusicapplication.notification.NotificationHandler
@@ -52,13 +49,10 @@ class DetailFragment : Fragment(), BackKeyListener, MusicServiceListener {
     private var x1:Float = 0.0f
     private var y2:Float = 0.0f
     private var y1:Float = 0.0f
-    var next: ImageView? = null
-    private var prev: ImageView? = null
-    private var play:ImageView? = null
     private var cardView: CardView? = null
-
     private var position: Int? = 0
     private var song:Song? = null
+    private var songList:ArrayList<Song>? = null
     private var mService: MusicService = MusicService()
     lateinit var binding: FragmentDetailBinding
 
@@ -69,7 +63,6 @@ class DetailFragment : Fragment(), BackKeyListener, MusicServiceListener {
     ): View {
         MainActivity.isMiniPlayerActive.value = false
 
-
         val activity = activity as MainActivity
         activity.setBackKeyListener(this)
         activity.setMusicServiceListener(this)
@@ -79,12 +72,9 @@ class DetailFragment : Fragment(), BackKeyListener, MusicServiceListener {
         binding.root.animation = animation
         binding.tvAlbum.isSelected = true
 
-        next = view?.findViewById(R.id.ivNext)
-        prev = view?.findViewById(R.id.ivPrevious)
-        play = view?.findViewById(R.id.ivPlay)
         cardView = view?.findViewById(R.id.cardView)
         song = arguments?.getParcelable("song") as Song?
-        val songList:ArrayList<Song>? = arguments?.getParcelableArrayList("songList")
+        songList = arguments?.getParcelableArrayList("songList")
         position = arguments?.get("position") as Int?
         sharedElementEnterTransition = MaterialContainerTransform()
         sharedElementReturnTransition = MaterialContainerTransform()
@@ -94,243 +84,12 @@ class DetailFragment : Fragment(), BackKeyListener, MusicServiceListener {
         val songViewModel = ViewModelProvider(this, SongViewModelFactory(repository))[SongViewModel::class.java]
         val user = activity.intent.getParcelableExtra<User>("user")
         val fav = songViewModel.getFavForUser(user!!.email)
-
-
-        isFav(songViewModel, user)
-        binding.ivFav.setOnClickListener {
-            if(!isFav( songViewModel, user)){
-                songViewModel.addSongsFav(song!!, fav[0])
-                (it as ImageView).setImageResource(R.drawable.heart)
-            }
-            else{
-                songViewModel.removeSongsFav(song!!,fav[0])
-                (it as ImageView).setImageResource(R.drawable.heart_un)
-            }
-            NotificationHandler(requireActivity()).showNotification(R.drawable.ic_simple_pause_,1F)
-        }
-
-        if(MusicService.STATE.value=="PAUSE"){
-            binding.ivPlay.setImageResource(R.drawable.ic_play)
-        }
-        else{
-            binding.ivPlay.setImageResource(R.drawable.ic_pause)
-        }
-
-
-
-
-        if(currentSongInstance?.song != song!!.song){
-            Intent(context, MusicService::class.java).also {
-                it.putExtra("position", position)
-                it.putParcelableArrayListExtra("songList",songList)
-                activity.startService(it)
-//                notificationHandler.release()
-//                notificationHandler.showNotification(R.drawable.ic_simple_pause_,1F)
-            }
-//            if(!mediaPlayerService.isPlaying){
-//
-//            }
-            MusicService.STATE.value = "PLAY"
-        }
-        else{
-            setSeekbarPosition()
-            setSongTime()
-        }
+        startMusicService()
         setSongDetails(song)
-        val miniPlayerFragment = MiniPlayerFragment()
-        val bundle = Bundle()
-        bundle.putParcelable("song",song)
-        bundle.putParcelableArrayList("songList",songList)
-        bundle.putInt("position",position!!)
-        miniPlayerFragment.arguments = bundle
-        activity.supportFragmentManager.beginTransaction()
-            //.remove(this)
-            .replace(R.id.miniPlayerFragmentContainer, miniPlayerFragment)
-            .commit()
-
-        val handler = Handler(Looper.getMainLooper())
-        val delay = 1000L
-        handler.postDelayed(object: Runnable{
-            override fun run() {
-                try{
-                    if(mediaPlayerService.currentPosition <= mediaPlayerService.duration) {
-                        setSeekbarPosition()
-                        setSongTime()
-                    }
-                }
-                catch (e:Exception){
-                    Log.i("ex", e.printStackTrace().toString())                }
-
-                handler.postDelayed(this,delay)
-            }
-        },delay)
-
-        binding.seekBar.setOnSeekBarChangeListener(object:SeekBar.OnSeekBarChangeListener{
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) { }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) { }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                mediaPlayerService.seekTo(seekBar!!.progress)
-                NotificationHandler(requireActivity()).showNotification(R.drawable.ic_simple_pause_,1F)
-            }
-
-        })
-
-        binding.ivPlay.setOnClickListener{
-            mService.play(context)
-        }
-
-        MusicService.STATE.observe(viewLifecycleOwner){
-            when(it){
-                "PAUSE"-> binding.ivPlay.setImageResource(R.drawable.ic_play)
-                "PLAY"-> binding.ivPlay.setImageResource(R.drawable.ic_pause)
-
-            }
-        }
-
-        binding.ivNext.setOnClickListener{
-            mService.next(context)
-            setUi()
-            isFav( songViewModel, user)
-        }
-
-        binding.ivPrevious.setOnClickListener{
-            mService.prev(context)
-            setUi()
-            isFav( songViewModel, user)
-        }
-
-        MusicService.songState.observe(viewLifecycleOwner){
-            if(it=="NEXT"){
-                setUi()
-                isFav( songViewModel, user)
-            }
-        }
-
-        NotificationReceiver.STATE.observe(viewLifecycleOwner){
-            when(it){
-                ACTION_NEXT-> setSongDetails(currentSongInstance)
-                ACTION_PREV-> setSongDetails(currentSongInstance)
-                ACTION_FAV-> isFav(songViewModel, user)
-            }
-        }
-
-        binding.downButton.setOnClickListener{
-            MainActivity.isMiniPlayerActive.value = true
-            activity.onBackPressed()
-        }
-
-
-        MusicService.isLoopOn.observe(viewLifecycleOwner){
-            if(it==true) binding.ivLoop.setImageResource(R.drawable.ic_baseline_loop_on)
-            else binding.ivLoop.setImageResource(R.drawable.ic_baseline_loop_24)
-        }
-
-        MusicService.isShuffleOn.observe(viewLifecycleOwner){
-            if(it==true) binding.ivShuffle.setImageResource(R.drawable.ic_baseline_shuffle_on)
-            else binding.ivShuffle.setImageResource(R.drawable.ic_baseline_shuffle_24)
-        }
-
-        binding.ivLoop.setOnClickListener {
-            MusicService.isLoopOn.value = MusicService.isLoopOn.value != true
-
-        }
-
-        binding.ivShuffle.setOnClickListener {
-            if(MusicService.isShuffleOn.value == true){
-                MusicService.isShuffleOn.value = false
-                binding.ivShuffle.setImageResource(R.drawable.ic_baseline_shuffle_24)
-            }
-            else{
-                MusicService.isShuffleOn.value = true
-                binding.ivShuffle.setImageResource(R.drawable.ic_baseline_shuffle_on)
-            }
-        }
-
-        binding.ivQueue.setOnClickListener {
-            val frag = QueueFragment()
-            activity.supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer,frag).addToBackStack(null).commit()
-            MainActivity.isMiniPlayerActive.value = true
-        }
-
-        binding.optionsButton.setOnClickListener { it ->
-            val view = it
-            val activity1 = it.context as AppCompatActivity
-            val popupMenu = PopupMenu(it.context, it)
-            popupMenu.setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.item1 -> {
-                        val dialog = AlbumDialogFragment()
-                        dialog.setStyle(DialogFragment.STYLE_NORMAL,R.style.DialogStyle2)
-                        val bundle = Bundle()
-                        bundle.putString("type", "selection_view")
-                        bundle.putParcelable("song", currentSongInstance)
-                        dialog.arguments = bundle
-                        dialog.show(activity1.supportFragmentManager, "albumDialog")
-                        return@setOnMenuItemClickListener true
-                    }
-
-                    R.id.item2 -> {
-                        if(Queue.getCount(currentSongInstance!!)>=5)
-                            Snackbar.make(view,"Song already added 5 times!", Snackbar.LENGTH_SHORT).setAnchorView(
-                                MainActivity.snackBarAnchor
-                            ).show()
-                        else {
-                            Queue.queue.add(currentSongInstance!!)
-                            Snackbar.make(view, "Song added to queue", Snackbar.LENGTH_SHORT)
-                                .setAnchorView(MainActivity.snackBarAnchor).show()
-                        }
-                        return@setOnMenuItemClickListener true
-                    }
-
-                    R.id.item3 -> {
-                        if(Queue.getCount(currentSongInstance!!)>=5)
-                            Snackbar.make(view,"Song already added 5 times!", Snackbar.LENGTH_SHORT).setAnchorView(
-                                MainActivity.snackBarAnchor
-                            ).show()
-                        else {
-                            Queue.queue.add(0, currentSongInstance!!)
-                            Snackbar.make(view,"Song will play next", Snackbar.LENGTH_SHORT).setAnchorView(
-                                MainActivity.snackBarAnchor
-                            ).show()
-                        }
-                        return@setOnMenuItemClickListener true
-                    }
-
-                    else -> return@setOnMenuItemClickListener false
-                }
-            }
-            popupMenu.inflate(R.menu.song_item_popup_menu)
-            popupMenu.gravity = Gravity.END
-            popupMenu.show()
-        }
-
-        binding.root.setOnTouchListener { _, event ->
-            when(event.action) {
-                0->{
-                    x1 = event.x
-                    y1 = event.y
-                }
-                1->{
-                    x2 = event.x
-                    y2 = event.y
-                    x2-x1
-                    val yVal = y2-y1
-
-                    if(abs(yVal) > MiniPlayerFragment.MIN_DISTANCE){
-                        if(y2 > y1){
-                            binding.downButton.performClick()
-                        }
-
-                    }
-                }
-            }
-            true
-        }
-
-
-
+        initListeners(songViewModel, user, fav)
+        initObservers(songViewModel, user)
+        openMiniPlayerFragment()
+        runHandler()
         return binding.root
     }
 
@@ -409,6 +168,286 @@ class DetailFragment : Fragment(), BackKeyListener, MusicServiceListener {
             false
         }
     }
+
+    private fun setIvFavListener(songViewModel: SongViewModel, user: User?, fav: Array<Favourite>){
+        isFav(songViewModel, user)
+        binding.ivFav.setOnClickListener {
+            if(!isFav( songViewModel, user)){
+                songViewModel.addSongsFav(song!!, fav[0])
+                (it as ImageView).setImageResource(R.drawable.heart)
+            }
+            else{
+                songViewModel.removeSongsFav(song!!,fav[0])
+                (it as ImageView).setImageResource(R.drawable.heart_un)
+            }
+            NotificationHandler(requireActivity()).showNotification(R.drawable.ic_simple_pause_,1F)
+        }
+    }
+
+    private fun startMusicService(){
+        if(currentSongInstance?.song != song!!.song){
+            Intent(context, MusicService::class.java).also {
+                it.putExtra("position", position)
+                it.putParcelableArrayListExtra("songList",songList)
+                activity?.startService(it)
+            }
+            MusicService.STATE.value = "PLAY"
+        }
+        else{
+            setSeekbarPosition()
+            setSongTime()
+        }
+    }
+
+    private fun openMiniPlayerFragment(){
+        val miniPlayerFragment = MiniPlayerFragment()
+        val bundle = Bundle()
+        bundle.putParcelable("song",song)
+        bundle.putParcelableArrayList("songList",songList)
+        bundle.putInt("position",position!!)
+        miniPlayerFragment.arguments = bundle
+        activity?.supportFragmentManager?.beginTransaction()
+
+            ?.replace(R.id.miniPlayerFragmentContainer, miniPlayerFragment)
+            ?.commit()
+    }
+
+    private fun runHandler(){
+        val handler = Handler(Looper.getMainLooper())
+        val delay = 1000L
+        handler.postDelayed(object: Runnable{
+            override fun run() {
+                try{
+                    if(mediaPlayerService.currentPosition <= mediaPlayerService.duration) {
+                        setSeekbarPosition()
+                        setSongTime()
+                    }
+                }
+                catch (e:Exception){
+                    Log.i("ex", e.printStackTrace().toString())                }
+
+                handler.postDelayed(this,delay)
+            }
+        },delay)
+    }
+
+    private fun setSeekBarChangeListener(){
+        binding.seekBar.setOnSeekBarChangeListener(object:SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) { }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) { }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                mediaPlayerService.seekTo(seekBar!!.progress)
+                NotificationHandler(requireActivity()).showNotification(R.drawable.ic_simple_pause_,1F)
+            }
+        })
+    }
+
+    private fun setIvPlayListener(){
+        binding.ivPlay.setOnClickListener{
+            mService.play(context)
+        }
+    }
+
+    private fun observeServiceSTATE(){
+        MusicService.STATE.observe(viewLifecycleOwner){
+            when(it){
+                "PAUSE"-> binding.ivPlay.setImageResource(R.drawable.ic_play)
+                "PLAY"-> binding.ivPlay.setImageResource(R.drawable.ic_pause)
+
+            }
+        }
+    }
+
+    private fun setIvNextListener(songViewModel: SongViewModel, user: User?){
+        binding.ivNext.setOnClickListener{
+            mService.next(context)
+            setUi()
+            isFav( songViewModel, user)
+        }
+    }
+
+    private fun setIvPreviousListener(songViewModel: SongViewModel, user: User?){
+        binding.ivPrevious.setOnClickListener{
+            mService.prev(context)
+            setUi()
+            isFav( songViewModel, user)
+        }
+    }
+
+    private fun observeSongState(songViewModel: SongViewModel, user: User?){
+        MusicService.songState.observe(viewLifecycleOwner){
+            if(it=="NEXT"){
+                setUi()
+                isFav( songViewModel, user)
+            }
+        }
+    }
+
+    private fun observeReceiverSTATE(songViewModel: SongViewModel, user: User?){
+        NotificationReceiver.STATE.observe(viewLifecycleOwner){
+            when(it){
+                ACTION_NEXT-> setSongDetails(currentSongInstance)
+                ACTION_PREV-> setSongDetails(currentSongInstance)
+                ACTION_FAV-> isFav(songViewModel, user)
+            }
+        }
+    }
+
+    private fun setDownListener(){
+        binding.downButton.setOnClickListener{
+            MainActivity.isMiniPlayerActive.value = true
+            activity?.onBackPressed()
+        }
+    }
+
+    private fun observeIsLoopOn(){
+        MusicService.isLoopOn.observe(viewLifecycleOwner){
+            if(it==true) binding.ivLoop.setImageResource(R.drawable.ic_baseline_loop_on)
+            else binding.ivLoop.setImageResource(R.drawable.ic_baseline_loop_24)
+        }
+    }
+
+    private fun observeIsShuffleOn(){
+        MusicService.isShuffleOn.observe(viewLifecycleOwner){
+            if(it==true) binding.ivShuffle.setImageResource(R.drawable.ic_baseline_shuffle_on)
+            else binding.ivShuffle.setImageResource(R.drawable.ic_baseline_shuffle_24)
+        }
+    }
+
+    private fun setIvLoopListener(){
+        binding.ivLoop.setOnClickListener {
+            MusicService.isLoopOn.value = MusicService.isLoopOn.value != true
+
+        }
+    }
+
+    private fun setIvShuffleListener(){
+        binding.ivShuffle.setOnClickListener {
+            if(MusicService.isShuffleOn.value == true){
+                MusicService.isShuffleOn.value = false
+                binding.ivShuffle.setImageResource(R.drawable.ic_baseline_shuffle_24)
+            }
+            else{
+                MusicService.isShuffleOn.value = true
+                binding.ivShuffle.setImageResource(R.drawable.ic_baseline_shuffle_on)
+            }
+        }
+    }
+
+    private fun setIvQueueListener(){
+        binding.ivQueue.setOnClickListener {
+            val frag = QueueFragment()
+            activity?.supportFragmentManager?.beginTransaction()
+                ?.replace(R.id.fragmentContainer,frag)
+                ?.addToBackStack(null)?.commit()
+            MainActivity.isMiniPlayerActive.value = true
+        }
+    }
+
+    private fun setOptionsListener(){
+        binding.optionsButton.setOnClickListener { it ->
+            val view = it
+            val activity1 = it.context as AppCompatActivity
+            val popupMenu = PopupMenu(it.context, it)
+            popupMenu.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.item1 -> {
+                        val dialog = AlbumDialogFragment()
+                        dialog.setStyle(DialogFragment.STYLE_NORMAL,R.style.DialogStyle2)
+                        val bundle = Bundle()
+                        bundle.putString("type", "selection_view")
+                        bundle.putParcelable("song", currentSongInstance)
+                        dialog.arguments = bundle
+                        dialog.show(activity1.supportFragmentManager, "albumDialog")
+                        return@setOnMenuItemClickListener true
+                    }
+
+                    R.id.item2 -> {
+                        if(Queue.getCount(currentSongInstance!!)>=5)
+                            Snackbar.make(view,"Song already added 5 times!", Snackbar.LENGTH_SHORT).setAnchorView(
+                                MainActivity.snackBarAnchor
+                            ).show()
+                        else {
+                            Queue.queue.add(currentSongInstance!!)
+                            Snackbar.make(view, "Song added to queue", Snackbar.LENGTH_SHORT)
+                                .setAnchorView(MainActivity.snackBarAnchor).show()
+                        }
+                        return@setOnMenuItemClickListener true
+                    }
+
+                    R.id.item3 -> {
+                        if(Queue.getCount(currentSongInstance!!)>=5)
+                            Snackbar.make(view,"Song already added 5 times!", Snackbar.LENGTH_SHORT).setAnchorView(
+                                MainActivity.snackBarAnchor
+                            ).show()
+                        else {
+                            Queue.queue.add(0, currentSongInstance!!)
+                            Snackbar.make(view,"Song will play next", Snackbar.LENGTH_SHORT).setAnchorView(
+                                MainActivity.snackBarAnchor
+                            ).show()
+                        }
+                        return@setOnMenuItemClickListener true
+                    }
+
+                    else -> return@setOnMenuItemClickListener false
+                }
+            }
+            popupMenu.inflate(R.menu.song_item_popup_menu)
+            popupMenu.gravity = Gravity.END
+            popupMenu.show()
+        }
+    }
+
+    private fun setTouchListener(){
+        binding.root.setOnTouchListener { _, event ->
+            when(event.action) {
+                0->{
+                    x1 = event.x
+                    y1 = event.y
+                }
+                1->{
+                    x2 = event.x
+                    y2 = event.y
+                    x2-x1
+                    val yVal = y2-y1
+
+                    if(abs(yVal) > MiniPlayerFragment.MIN_DISTANCE){
+                        if(y2 > y1){
+                            binding.downButton.performClick()
+                        }
+
+                    }
+                }
+            }
+            true
+        }
+    }
+
+    private fun initListeners(songViewModel: SongViewModel, user: User?, fav: Array<Favourite>){
+        setIvFavListener(songViewModel,user,fav)
+        setSeekBarChangeListener()
+        setIvPlayListener()
+        setIvNextListener(songViewModel, user)
+        setIvPreviousListener(songViewModel, user)
+        setDownListener()
+        setIvLoopListener()
+        setIvShuffleListener()
+        setIvQueueListener()
+        setOptionsListener()
+        setTouchListener()
+    }
+
+    private fun initObservers(songViewModel: SongViewModel, user: User?){
+        observeServiceSTATE()
+        observeSongState(songViewModel, user)
+        observeReceiverSTATE(songViewModel, user)
+        observeIsLoopOn()
+        observeIsShuffleOn()
+    }
+
+
 
 
 }

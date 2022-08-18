@@ -76,7 +76,6 @@ class NotificationHandler(var context: Context) {
                 .addAction(R.drawable.ic_simple_prev,"previous", prevPendingIntent)
                 .addAction(playPauseButton,"play", playPendingIntent)
                 .addAction(R.drawable.ic_simple_skip,"next", nextPendingIntent)
-                //.setProgress(100, 50,false)
                 .setStyle(androidx.media.app.NotificationCompat.MediaStyle()
                     .setMediaSession(mediaSession.sessionToken))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -91,12 +90,23 @@ class NotificationHandler(var context: Context) {
             MediaMetadataCompat.Builder()
                 .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, MusicService.mediaPlayerService.duration.toLong())
                 .build())
-        mediaSession.setPlaybackState(
-            PlaybackStateCompat.Builder()
-                .setState(PlaybackStateCompat.STATE_PLAYING, MusicService.mediaPlayerService.currentPosition.toLong(),playbackSpeed)
-                .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
-                .build()
-        )
+
+        if(playbackSpeed==0f){
+            mediaSession.setPlaybackState(
+                PlaybackStateCompat.Builder()
+                    .setState(PlaybackStateCompat.STATE_PAUSED, MusicService.mediaPlayerService.currentPosition.toLong(),playbackSpeed)
+                    .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+                    .build()
+            )
+        }
+        else{
+            mediaSession.setPlaybackState(
+                PlaybackStateCompat.Builder()
+                    .setState(PlaybackStateCompat.STATE_PLAYING, MusicService.mediaPlayerService.currentPosition.toLong(),playbackSpeed)
+                    .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+                    .build()
+            )
+        }
         mediaSession.setCallback(object: MediaSessionCompat.Callback(){
             override fun onSeekTo(pos: Long) {
                 super.onSeekTo(pos)

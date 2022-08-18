@@ -57,125 +57,26 @@ class MainActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListene
         audioBecomingNoisyReceiver = AudioBecomingNoisyReceiver()
         intentFilter= IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
         registerReceiver(audioBecomingNoisyReceiver,intentFilter)
-
         val dao = SongDatabase.getInstance(this).songDao
         val repository = SongRepository(dao)
         val songViewModel = ViewModelProvider(this, SongViewModelFactory(repository))[SongViewModel::class.java]
-
-        val audioRequest=AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-            .setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build()
-            )
-            .setAcceptsDelayedFocusGain(true)
-            .setOnAudioFocusChangeListener(this)
-            .build()
-
+        val audioRequest = getAudioRequest()
         audioManager = this.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        STATE.observe(this){
-            if(it=="PLAY"){
-                val requestAudioFocusResult = audioManager!!.requestAudioFocus(audioRequest)
-                if(requestAudioFocusResult != AudioManager.AUDIOFOCUS_REQUEST_GRANTED){
-                    mediaPlayerService.pause()
-                    STATE.value = "PAUSE"
-                }
-            }
-            else if(it=="PAUSE"){
-                audioManager!!.abandonAudioFocusRequest(audioRequest)
-            }
-        }
-
-
+        observeServiceSTATE(audioRequest)
         val user = intent.getParcelableExtra<User>("user")
         if(user!=null)
-        Toast.makeText(this,"Logged in as ${user.email}",Toast.LENGTH_LONG).show()
-
-
-        MusicService.songChanged.observe(this){
-            if(it==true){
-                val songData =songViewModel.getSongData(user?.email)
-                currentSongInstance?.let { it1 -> songViewModel.addSongData(songData[0], it1) }
-            }
-        }
-
+            Toast.makeText(this,"Logged in as ${user.email}",Toast.LENGTH_LONG).show()
+        observeSongChange(songViewModel, user)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         window.statusBarColor = Color.parseColor("#000000")
         super.onCreate(savedInstanceState)
         binding= ActivityMainBinding.inflate(layoutInflater)
-
-        supportFragmentManager.addOnBackStackChangedListener {
-            backPressCounter = 0
-        }
-
+        setBackStackChangeListener()
         setContentView(binding.root)
-        val homeFragment = HomeFragment()
-        val searchFragment = SearchFragment()
-        val albumFragment = AlbumFragment()
-        val accountFragment = AccountFragment()
-
         supportActionBar?.hide()
-
-        isMiniPlayerActive.observe(this){
-            if(it == true){
-                binding.miniPlayerFragmentContainer.visibility = View.VISIBLE
-                snackBarAnchor = R.id.miniPlayerFragmentContainer
-            }
-            else{
-                binding.miniPlayerFragmentContainer.visibility = View.INVISIBLE
-                snackBarAnchor = R.id.menu
-            }
-        }
-
-
-        binding.menu.setOnItemSelectedListener{
-            when(it.itemId){
-                R.id.miHome -> setCurrentFragment(homeFragment)
-                R.id.miSearch -> setCurrentFragment(searchFragment)
-                R.id.miAlbum -> setCurrentFragment(albumFragment)
-                R.id.miAccount ->setCurrentFragment(accountFragment)
-            }
-            return@setOnItemSelectedListener true
-        }
-
-        supportFragmentManager.addOnBackStackChangedListener {
-            when(supportFragmentManager.findFragmentById(R.id.fragmentContainer)){
-                is HomeFragment->binding.menu.menu.findItem(R.id.miHome).isChecked = true
-                is SearchFragment->binding.menu.menu.findItem(R.id.miSearch).isChecked = true
-                is AlbumFragment->binding.menu.menu.findItem(R.id.miAlbum).isChecked = true
-                is AccountFragment ->binding.menu.menu.findItem(R.id.miAccount).isChecked = true
-            }
-        }
-
-        MusicService.isShuffleOn.observe(this){
-            if(it==true){
-                randomList = generateShuffleList(MusicService.songList.value)
-                nextPlayingList = randomList
-            }
-            else{
-                randomList = null
-                nextPlayingList = MusicService.songList.value
-            }
-        }
-
-        MusicService.songChanged.observe(this){
-            if(it==true){
-                if(MusicService.songList.value!=null) {
-                    nextPlayingList = MusicService.songList.value
-                }
-                if(MusicService.songList.value!=null && randomList!=null) {
-                    if (!checkList(MusicService.songList.value, randomList)) {
-                        randomList = generateShuffleList(MusicService.songList.value)
-                        nextPlayingList = randomList
-                    }
-                }
-
-
-
-
-            }
-        }
+        observeIsMiniPlayerActive()
+        setMenuListener()
+        observeIsShuffleOn()
     }
 
     fun checkList(value: List<Song>?, randomList: List<Song>?):Boolean {
@@ -336,6 +237,105 @@ class MainActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListene
             else-> false
         }
     }
+
+    private fun getAudioRequest(): AudioFocusRequest{
+        return AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+            .setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build()
+            )
+            .setAcceptsDelayedFocusGain(true)
+            .setOnAudioFocusChangeListener(this)
+            .build()
+    }
+
+    private fun observeServiceSTATE(audioRequest: AudioFocusRequest){
+        STATE.observe(this){
+            if(it=="PLAY"){
+                val requestAudioFocusResult = audioManager!!.requestAudioFocus(audioRequest)
+                if(requestAudioFocusResult != AudioManager.AUDIOFOCUS_REQUEST_GRANTED){
+                    mediaPlayerService.pause()
+                    STATE.value = "PAUSE"
+                }
+            }
+            else if(it=="PAUSE"){
+                audioManager!!.abandonAudioFocusRequest(audioRequest)
+            }
+
+        }
+    }
+
+    private fun observeSongChange(songViewModel: SongViewModel, user: User?){
+        MusicService.songChanged.observe(this){
+            if(it==true){
+                val songData =songViewModel.getSongData(user?.email)
+                currentSongInstance?.let { it1 -> songViewModel.addSongData(songData[0], it1) }
+                if(MusicService.songList.value!=null) {
+                    nextPlayingList = MusicService.songList.value
+                }
+                if(MusicService.songList.value!=null && randomList!=null) {
+                    if (!checkList(MusicService.songList.value, randomList)) {
+                        randomList = generateShuffleList(MusicService.songList.value)
+                        nextPlayingList = randomList
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setBackStackChangeListener(){
+        supportFragmentManager.addOnBackStackChangedListener {
+            backPressCounter = 0
+        }
+    }
+
+    private fun observeIsMiniPlayerActive(){
+        isMiniPlayerActive.observe(this){
+            if(it == true){
+                binding.miniPlayerFragmentContainer.visibility = View.VISIBLE
+                snackBarAnchor = R.id.miniPlayerFragmentContainer
+            }
+            else{
+                binding.miniPlayerFragmentContainer.visibility = View.INVISIBLE
+                snackBarAnchor = R.id.menu
+            }
+        }
+    }
+
+    private fun setMenuListener(){
+        val homeFragment = HomeFragment()
+        val searchFragment = SearchFragment()
+        val albumFragment = AlbumFragment()
+        val accountFragment = AccountFragment()
+        binding.menu.setOnItemSelectedListener{
+            when(it.itemId){
+                R.id.miHome -> setCurrentFragment(homeFragment)
+                R.id.miSearch -> setCurrentFragment(searchFragment)
+                R.id.miAlbum -> setCurrentFragment(albumFragment)
+                R.id.miAccount ->setCurrentFragment(accountFragment)
+            }
+            return@setOnItemSelectedListener true
+        }
+    }
+
+    private fun observeIsShuffleOn(){
+        MusicService.isShuffleOn.observe(this){
+            if(it==true){
+                randomList = generateShuffleList(MusicService.songList.value)
+                nextPlayingList = randomList
+            }
+            else{
+                randomList = null
+                nextPlayingList = MusicService.songList.value
+            }
+        }
+    }
+
+
+
+
 
 
 }

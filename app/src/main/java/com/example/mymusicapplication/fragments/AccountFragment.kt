@@ -61,7 +61,7 @@ class AccountFragment : Fragment() {
                 activity?.finish()
             }
             if (user1 != null) {
-                songViewModel.userLogOut(user1!!)
+                songViewModel.userLogOut()
             }
         }
 

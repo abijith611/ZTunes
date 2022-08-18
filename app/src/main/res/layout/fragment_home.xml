@@ -159,7 +159,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/innerLayout"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:splitMotionEvents="false">
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card1"
@@ -334,7 +335,8 @@
                 android:id="@+id/innerLayout1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="40dp">
+                android:layout_marginBottom="40dp"
+                android:splitMotionEvents="false">
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card11"

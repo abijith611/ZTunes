@@ -70,7 +70,7 @@ class SignupFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val user = User(0,email,pwd,name,mob,true)
+            val user = User(0,email,pwd,name,mob)
             songViewModel.insertUser(user)
             Intent(requireActivity().application, MainActivity::class.java).apply {
                 this.putExtra("user",user)

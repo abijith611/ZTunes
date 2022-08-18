@@ -22,7 +22,7 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
     }
     init {
         if(getAllUsers().isEmpty()) {
-            insertUser(User(0, "admin", "admin", "Admin", "9840123456", true))
+            insertUser(User(0, "admin", "admin", "Admin", "9840123456"))
         }
         if(allSongs.isEmpty()) {
             GlobalScope.launch {
@@ -432,7 +432,7 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
         }
         runBlocking {
             repository.insertUser(user)
-            repository.insertUserLog(UserLog(0, user.email!!, user.isLoggedIn, LocalDateTime.now()))
+            repository.insertUserLog(UserLog(0, user.email!!, LocalDateTime.now()))
         }
     }
 
@@ -469,28 +469,23 @@ class SongViewModel(private val repository: SongRepository):ViewModel() {
         return null
     }
 
-    fun userLogOut(user: User){
-        user.isLoggedIn = false
-        updateUser(user)
-        val userLog = getAllUserLog()[0]
-        userLog.isLoggedIn = false
-        updateUserLog(userLog)
-    }
-
-    fun userLogIn(user: User){
-        user.isLoggedIn = true
-        updateUser(user)
+    fun userLogOut(){
+        Log.i("userLog1",getAllUserLog().toList().toString())
         if(getAllUserLog().isNotEmpty()){
             val userLog = getAllUserLog()[0]
             deleteUserLog(userLog)
         }
-
-        insertUserLog(UserLog( 0,user.email!!,  user.isLoggedIn, LocalDateTime.now()))
+        Log.i("userLog2",getAllUserLog().toList().toString())
     }
 
-    private fun updateUser(user:User){
-        runBlocking { repository.updateUser(user) }
+    fun userLogIn(user: User){
+        if(getAllUserLog().isEmpty())
+            insertUserLog(UserLog( 0,user.email!!, LocalDateTime.now()))
     }
+
+//    private fun updateUser(user:User){
+//        runBlocking { repository.updateUser(user) }
+//    }
 
     private fun insertFavourite(favourite: Favourite){
         runBlocking { repository.insertFav(favourite) }

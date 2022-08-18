@@ -15,12 +15,8 @@ data class UserLog(
     @ColumnInfo(name = "email")
     var email:String,
 
-    @ColumnInfo(name = "isLoggedIn")
-    var isLoggedIn: Boolean,
-
     @ColumnInfo(name = "time")
     var loginTime: LocalDateTime,
-
 )
 
 class LocalDateTimeConverter {

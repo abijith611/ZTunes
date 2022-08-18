@@ -18,7 +18,10 @@ class SplashActivity : AppCompatActivity() {
         supportActionBar?.hide()
         window.statusBarColor = Color.parseColor("#000000")
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        runHandler()
+    }
 
+    private fun runHandler(){
         Handler(Looper.getMainLooper()).postDelayed({
             Intent(this, LoginActivity::class.java).also {
                 startActivity(it)

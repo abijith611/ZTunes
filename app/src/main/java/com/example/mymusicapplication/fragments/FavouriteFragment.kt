@@ -40,8 +40,8 @@ class FavouriteFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         sharedElementEnterTransition = MaterialContainerTransform()
+        sharedElementReturnTransition = MaterialContainerTransform()
         var titleSTATE = "unsorted"
         var artistSTATE = "unsorted"
         var albumSTATE = "unsorted"

@@ -612,20 +612,6 @@ class ListFragment : Fragment() {
         return binding.root
     }
 
-//    private fun getDuration(songs: List<Song>): String{
-//        var mediaPlayer: MediaPlayer
-//        var duration = 0
-//        for(song in songs){
-//            mediaPlayer=MediaPlayer.create(requireActivity().application, song.song)
-//            duration+=mediaPlayer.duration
-//            mediaPlayer.release()
-//            Log.i("duration",duration.toString())
-//        }
-//        val hours = duration/(1000 * 60 * 60)
-//        val totalMinutes = duration/(1000 * 60)
-//        val residualMinutes = totalMinutes % (60 * 24)
-//        return "${hours}h ${residualMinutes}m"
-//    }
 
         private fun getDuration(songs: List<Song>): String{
 

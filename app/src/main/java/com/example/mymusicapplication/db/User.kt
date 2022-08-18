@@ -24,8 +24,7 @@ data class User(
     @ColumnInfo(name = "mobileNumber")
     var mobileNumber: String?,
 
-    @ColumnInfo(name = "isLoggedIn")
-    var isLoggedIn: Boolean
+
 ):Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
@@ -33,7 +32,6 @@ data class User(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readByte() != 0.toByte()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -42,7 +40,6 @@ data class User(
         parcel.writeString(pwd)
         parcel.writeString(name)
         parcel.writeString(mobileNumber)
-        parcel.writeByte(if (isLoggedIn) 1 else 0)
     }
 
     override fun describeContents(): Int {

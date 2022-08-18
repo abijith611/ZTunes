@@ -30,9 +30,10 @@ class LoginActivity : AppCompatActivity() {
         val repository = SongRepository(dao)
         val songViewModel = ViewModelProvider(this, SongViewModelFactory(repository))[SongViewModel::class.java]
         if(songViewModel.getAllUserLog().isNotEmpty()) {
-            val userLog = songViewModel.getAllUserLog().last()
-
-            if (userLog.isLoggedIn) {
+            val userLog = songViewModel.getAllUserLog()[0]
+            Log.i("login", userLog.toString())
+            Log.i("allLogs", songViewModel.getAllUserLog().toList().toString())
+            //if (userLog.isLoggedIn) {
                 val user = songViewModel.getUser(userLog.email)
                 Intent(this, MainActivity::class.java).apply {
                     songViewModel.userLogIn(user!!)
@@ -40,7 +41,7 @@ class LoginActivity : AppCompatActivity() {
                     startActivity(this)
                     finish()
                 }
-            }
+            //}
         }
 
         binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Login"))
