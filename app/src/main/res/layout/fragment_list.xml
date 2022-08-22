@@ -181,7 +181,7 @@
                         android:layout_height="60dp"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
-                        android:src="@drawable/play_all"
+                        android:src="@drawable/layer"
                         app:layout_constraintBottom_toTopOf="@+id/viewList"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -200,6 +200,7 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvList"
+                        android:splitMotionEvents="false"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:clipToPadding="false"

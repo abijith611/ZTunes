@@ -8,6 +8,8 @@ import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -15,9 +17,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.mymusicapplication.R
 import com.example.mymusicapplication.databinding.ActivityMainBinding
+
 import com.example.mymusicapplication.db.Song
 import com.example.mymusicapplication.db.SongDatabase
 import com.example.mymusicapplication.db.SongRepository
@@ -37,7 +41,7 @@ import com.example.mymusicapplication.viewModel.SongViewModel
 import com.example.mymusicapplication.viewModel.SongViewModelFactory
 import kotlin.random.Random
 
-class MainActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListener {
+class MainActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListener, Observer<String> {
     companion object{
         val notActive = MutableLiveData(false)
         var isMiniPlayerActive = MutableLiveData(false)
@@ -60,9 +64,8 @@ class MainActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListene
         val dao = SongDatabase.getInstance(this).songDao
         val repository = SongRepository(dao)
         val songViewModel = ViewModelProvider(this, SongViewModelFactory(repository))[SongViewModel::class.java]
-        val audioRequest = getAudioRequest()
         audioManager = this.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        observeServiceSTATE(audioRequest)
+        observeServiceSTATE()
         val user = intent.getParcelableExtra<User>("user")
         if(user!=null)
             Toast.makeText(this,"Logged in as ${user.email}",Toast.LENGTH_LONG).show()
@@ -104,12 +107,16 @@ class MainActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListene
     }
 
     override fun onDestroy() {
-        registerReceiver(audioBecomingNoisyReceiver,intentFilter)
+        unregisterReceiver(audioBecomingNoisyReceiver)
         mListener?.onMusicStop()
         super.onDestroy()
     }
 
     override fun onStop() {
+        if(isFinishing){
+            STATE.removeObserver(this)
+            audioManager = null
+        }
         notActive.value = true
         super.onStop()
     }
@@ -131,6 +138,7 @@ class MainActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListene
     override fun onPause() {
         if(mediaPlayerService.isPlaying)
             NotificationHandler(application).showNotification(R.drawable.ic_simple_pause_,1F)
+        Log.i("onPause", "called")
         super.onPause()
     }
 
@@ -158,11 +166,13 @@ class MainActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListene
 
 
     override fun onBackPressed() {
-
         if(isMainFragment()){
             if(backPressCounter < 1){
                 Toast.makeText(this, "Press back again to exit!",Toast.LENGTH_SHORT).show()
                 backPressCounter++
+                Handler(Looper.getMainLooper()).postDelayed({
+                    backPressCounter = 0
+                },2500)
             }
             else{
                 super.onPause()
@@ -204,8 +214,10 @@ class MainActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListene
 
 
     override fun onAudioFocusChange(focusChange: Int) {
+        if(audioManager!=null)
         when(focusChange){
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT-> {
+                Log.i("AudioFocus", "Loss Transient")
                 STATE.value = "PAUSE"
                     mediaPlayerService.pause()
                     NotificationHandler(application).showNotification(
@@ -214,6 +226,7 @@ class MainActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListene
                     )
             }
             AudioManager.AUDIOFOCUS_GAIN-> {
+                Log.i("AudioFocus", "Gain")
                 STATE.value = "PLAY"
                     mediaPlayerService.start()
                     NotificationHandler(application).showNotification(
@@ -223,7 +236,13 @@ class MainActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListene
 
             }
             AudioManager.AUDIOFOCUS_LOSS-> {
+                Log.i("AudioFocus", "Loss")
                 STATE.value = "PAUSE"
+                mediaPlayerService.pause()
+                NotificationHandler(application).showNotification(
+                    R.drawable.ic_simple_play_,
+                    0F
+                )
             }
         }
     }
@@ -251,20 +270,8 @@ class MainActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListene
             .build()
     }
 
-    private fun observeServiceSTATE(audioRequest: AudioFocusRequest){
-        STATE.observe(this){
-            if(it=="PLAY"){
-                val requestAudioFocusResult = audioManager!!.requestAudioFocus(audioRequest)
-                if(requestAudioFocusResult != AudioManager.AUDIOFOCUS_REQUEST_GRANTED){
-                    mediaPlayerService.pause()
-                    STATE.value = "PAUSE"
-                }
-            }
-            else if(it=="PAUSE"){
-                audioManager!!.abandonAudioFocusRequest(audioRequest)
-            }
-
-        }
+    private fun observeServiceSTATE(){
+        STATE.observeForever(this)
     }
 
     private fun observeSongChange(songViewModel: SongViewModel, user: User?){
@@ -333,9 +340,21 @@ class MainActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListene
         }
     }
 
-
-
-
+    override fun onChanged(t: String?) {
+        Log.i("MusicService", t.toString())
+        if(t=="PLAY"){
+            Log.i("AudioFocus", "Request Focus")
+            val requestAudioFocusResult = audioManager!!.requestAudioFocus(getAudioRequest())
+            if(requestAudioFocusResult != AudioManager.AUDIOFOCUS_REQUEST_GRANTED){
+                mediaPlayerService.pause()
+                STATE.value = "PAUSE"
+            }
+        }
+        else if(t=="PAUSE"){
+            Log.i("AudioFocus", "Abandon Focus")
+            audioManager!!.abandonAudioFocusRequest(getAudioRequest())
+        }
+    }
 
 
 }

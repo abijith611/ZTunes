@@ -35,7 +35,8 @@ import com.example.mymusicapplication.viewholder.MyViewHolder
 import com.google.android.material.snackbar.Snackbar
 import java.util.ArrayList
 
-class MyRecyclerViewAdapter(private var songList: MutableList<Song>,var songViewModel: SongViewModel,var  isFav: Boolean, var user: User) :
+class MyRecyclerViewAdapter(private var songList: MutableList<Song>, var songViewModel: SongViewModel,
+                            private var  isFav: Boolean, var user: User) :
     RecyclerView.Adapter<MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -75,7 +76,7 @@ class MyRecyclerViewAdapter(private var songList: MutableList<Song>,var songView
                     (it as ImageView).setImageResource(R.drawable.heart_un)
                     if(isFav){
                         val frag = FavouriteFragment()
-                        (it.context as MainActivity).supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, frag).addToBackStack(null).commit()
+                        (it.context as MainActivity).supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, frag).commit()
                     }
                     notifyDataSetChanged()
                 }

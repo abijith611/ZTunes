@@ -74,6 +74,8 @@ class MyPlaylistItemRecyclerViewAdapter(private var songList: MutableList<Song>,
                 }
             }
 
+
+
         val fav = songViewModel.getFavForUser(user?.email)
             isFav(holder,fav,currentSong)
         holder.fav.setOnClickListener {

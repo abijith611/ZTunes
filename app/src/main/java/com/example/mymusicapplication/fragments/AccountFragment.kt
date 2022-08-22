@@ -49,7 +49,7 @@ class AccountFragment : Fragment() {
         }
 
 
-        binding.ivForward.setOnClickListener {
+        binding.favList.setOnClickListener {
             val fragment = FavouriteFragment()
             activity?.supportFragmentManager?.beginTransaction()?.addSharedElement(binding.favList, "favClicked")
                 ?.replace(R.id.fragmentContainer,fragment)?.addToBackStack(null)?.commit()
@@ -77,7 +77,7 @@ class AccountFragment : Fragment() {
 
 
 
-        binding.ivForward1.setOnClickListener foo@{
+        binding.acc.setOnClickListener foo@{
             val validator = Validator()
             val dialog = Dialog(it.context, R.style.DialogStyle)
             dialog.setContentView(R.layout.fragment_edit_dialog)

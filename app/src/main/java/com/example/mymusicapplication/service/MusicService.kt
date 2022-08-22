@@ -38,7 +38,6 @@ class MusicService: Service(),LifecycleObserver {
     private var isPaused = false
     private val binder = LocalBinder()
     inner class LocalBinder: Binder()
-
     override fun onBind(intent: Intent?): IBinder {
         return binder
     }
@@ -102,12 +101,14 @@ class MusicService: Service(),LifecycleObserver {
             mediaPlayerService.pause()
             isPaused = true
             STATE.value="PAUSE"
+            Log.i("M","Pause")
             NotificationHandler(context!!).showNotification(R.drawable.ic_simple_play_,0F)
         }
         else{
             mediaPlayerService.start()
             isPaused = false
             STATE.value="PLAY"
+            Log.i("M","Play")
             NotificationHandler(context!!).showNotification(R.drawable.ic_simple_pause_,1F)
         }
     }

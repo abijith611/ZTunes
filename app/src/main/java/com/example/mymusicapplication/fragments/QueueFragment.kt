@@ -94,9 +94,6 @@ companion object{
             }
         }
 
-
-
-
         binding.rvQueue.adapter = adapter
         binding.rvQueue.layoutManager = LinearLayoutManager(requireActivity().application)
         val itemTouchHelper = ItemTouchHelper(simpleCallback)

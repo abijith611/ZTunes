@@ -65,8 +65,7 @@ class ListFragment : Fragment() {
         var ivState = MutableLiveData<Boolean>()
         lateinit var songs: List<Song>
     }
-
-    var collapsed:Boolean? = null
+    private var collapsed:Boolean? = null
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
@@ -84,7 +83,6 @@ class ListFragment : Fragment() {
         val dao = SongDatabase.getInstance(requireActivity().application).songDao
         val repository = SongRepository(dao)
         songViewModel = ViewModelProvider(this, SongViewModelFactory(repository))[SongViewModel::class.java]
-//        songs = songViewModel.allSongs
         songs = arguments?.getParcelableArrayList<Song>("songs") as List<Song>
 
 
@@ -94,11 +92,6 @@ class ListFragment : Fragment() {
         sharedElementReturnTransition = MaterialContainerTransform()
         binding.root.transitionName = genre
         val playlist = arguments?.getParcelable<Playlist>("playlist")
-//        Handler(Looper.getMainLooper()).postDelayed({
-//            if(totalDuration.isEmpty())
-//                totalDuration = getDuration(songs)
-//            binding.tvDuration.text = totalDuration
-//        },0)
 
         setDuration(songs)
 
@@ -291,13 +284,6 @@ class ListFragment : Fragment() {
                 artistSTATE = UNSORTED
                 albumSTATE = UNSORTED
                 binding.appBarLayout.setExpanded(false)
-                //binding.card.visibility = View.INVISIBLE
-
-//                val set = ConstraintSet()
-//                val layout = binding.constraintLayoutList
-//                set.clone(layout)
-//                set.connect(binding.tvHeading1.id, ConstraintSet.TOP,binding.searchCard.id, ConstraintSet.BOTTOM)
-//                set.applyTo(layout)
                 val scale = resources.displayMetrics.density
                 var sizeDp = 0
                 var padding = sizeDp*scale+0.5f
